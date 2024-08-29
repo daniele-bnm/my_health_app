@@ -3,10 +3,10 @@ from health_app import app, db
 from health_app.forms import RegistrationForm
 from health_app.models import Consumer
 
-
 @app.route('/')
 def landing_page():
     return render_template('landing_page.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
