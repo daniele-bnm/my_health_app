@@ -19,7 +19,8 @@ def register():
         return redirect(url_for('home'))
     if form.errors != {}:
         for err_msg in form.errors.values():
-            flash(f'There was an error: {err_msg}', 'warning')
+            msg = f'{err_msg}'
+            flash(f'There was an error: {msg[2:-2]}', 'warning')
     return render_template('register.html', form=form)
 
 @app.route('/home')
