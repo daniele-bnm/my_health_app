@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Registration Page{% endblock %}
+
+{% block content %}
+
+  <div class="container" >
+    <div class="mt-5 mb-3">
+      <h1 class="text-center">Crea il tuo Account</h1>
+    </div>
+      <form method="POST" class="form-register">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control", placeholder="Indirizzo Email") }}
+        </div>
+        <div class="mb-3">
+          {{ form.password.label(class="form-label") }}
+          {{ form.password(class="form-control", placeholder="Password") }}
+        </div>
+        <div class="mb-3">
+          {{ form.confirm_password.label(class="form-label") }}
+          {{ form.confirm_password(class="form-control", placeholder="Conferma Password") }}
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="Nome") }}
+          </div>
+          <div class="col">
+            {{ form.surname.label(class="form-label") }}
+            {{ form.surname(class="form-control", placeholder="Cognome") }}
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            {{ form.date_of_birth.label(class="form-label") }}
+            {{ form.date_of_birth(class="form-control", placeholder="dd/mm/yyyy") }}
+          </div>
+          <div class="col">
+            {{ form.gender.label(class="form-label") }}
+            {{ form.gender(class="form-control") }}
+          </div>
+        </div>
+
+        {{ form.submit(class="btn btn-lg btn-block btn-primary text-center") }}
+      </form>
+  </div>
+{% endblock %}
