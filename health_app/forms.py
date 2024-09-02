@@ -19,11 +19,11 @@ class RegistrationForm(FlaskForm):
     name = StringField(label='Nome:', validators=[DataRequired()])
     surname = StringField(label='Cognome:', validators=[DataRequired()])
     date_of_birth = DateField(label='Data di Nascita:', validators=[DataRequired()])
-    gender = SelectField(label='Genere:', choices=[('male', 'Maschio'), ('female', 'Femmina')], validators=[DataRequired()])
+    gender = SelectField(label='Genere:', choices=[('', 'Seleziona'), ('male', 'Maschio'), ('female', 'Femmina')], validators=[DataRequired()])
     submit = SubmitField(label='Registrati')
 
 class LoginForm(FlaskForm):
 
     email = StringField(label='Indirizzo Email:', validators=[DataRequired(), Email()])
     password = PasswordField(label='Password:', validators=[DataRequired()])
-    submit = SubmitField(label='Login')
+    submit = SubmitField(label='Accedi')
