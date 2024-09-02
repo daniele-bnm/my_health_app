@@ -1,8 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
+from health_app import db, bcrypt
 
-bcrypt = Bcrypt()
-db = SQLAlchemy()
 
 class Consumer(db.Model):
     __tablename__ = 'Consumer'
