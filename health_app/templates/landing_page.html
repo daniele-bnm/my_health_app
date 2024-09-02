@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html >
-  <head>
-    <title>Sana Spesa</title>
-    {% include 'bootstrap/bootstrap.html' %}
-  </head>
-  <body>
-    {% include 'nav.html' %}
-    {#
-      {% include 'banner.html' %}
-    #}
+{% extends 'base.html' %}
+
+{% block title %}Login Page{% endblock %}
+
+{% block content %}
 
     <div class="container">
       <h1 class="text-center mt-2 mb-4">
@@ -26,9 +20,12 @@
       </div>
 
       <div class="text-center">
-      <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Entra</a>
+        {% if current_user.is_authenticated %}
+          <a class="btn btn-primary btn-lg" href="{{ url_for('home_page') }}">Entra</a>
+        {% else %}
+          <a class="btn btn-primary btn-lg" href="{{ url_for('login_page') }}">Entra</a>
+        {% endif %}
       </div>
     </div>
-  {# {% include 'footer.html' %} #}
-  </body>
-</html>
+
+{% endblock %}
