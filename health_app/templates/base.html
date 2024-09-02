@@ -21,8 +21,13 @@
                 </div>
             {% endif %}
         {% endwith %}
-        {% block content %}
 
+        {% block content %}
+            <!--
+                 ###########################################
+                 Content from children pages is placed here
+                 ##########################################
+            -->
         {% endblock %}
 
         {% include 'bootstrap/jsBundle.html' %}
