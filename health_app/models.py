@@ -1,7 +1,12 @@
-from health_app import db, bcrypt
+from health_app import db, bcrypt, login_manager
+from flask_login import UserMixin
 
 
-class Consumer(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return Consumer.query.get(int(user_id))
+
+class Consumer(db.Model, UserMixin):
     __tablename__ = 'Consumer'
 
     ConsumerId = db.Column(db.Integer, autoincrement=True, unique=True, index=True, primary_key=True, nullable=False)
@@ -20,13 +25,17 @@ class Consumer(db.Model):
 
     @property
     def password(self):
-        return self.password
+        return self.PasswordHash
 
     @password.setter
     def password(self, plain_text_password):
         self.PasswordHash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
 
+    def check_password_hash(self, attempted_password):
+        return bcrypt.check_password_hash(self.PasswordHash, attempted_password)
 
+    def get_id(self):
+        return self.ConsumerId
 
 class BodyComposition(db.Model):
     __tablename__ = 'BodyComposition'
