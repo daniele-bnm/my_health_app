@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Profilo{% endblock %}
+
+{% from 'app_dir/macros.html' import render_field %}
+{% block content %}
+
+  <div class="container-sm" >
+    <div class="mt-5 mb-3">
+      <h1 class="text-center">Profilo personale di {{ current_user.Name }}</h1>
+    </div>
+    <form method="POST" action="{{ url_for('profile_page') }}">
+
+        {{ form.hidden_tag() }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.name) }}
+        {{ render_field(form.surname) }}
+        {{ render_field(form.date_of_birth) }}
+        {{ render_field(form.place_of_birth) }}
+        {{ render_field(form.gender) }}
+        {{ render_field(form.address) }}
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.submit(class="btn btn-lg btn-block btn-primary text-center") }}
+            </div>
+            <div class="col d-flex justify-content-end align-items-end">
+                <a class="btn btn-secondary btn ms-2" href="{{ url_for('home_page') }}">Torna alla Home</a>
+            </div>
+        </div>
+    </form>
+
+
+
+  </div>
+{% endblock %}
