@@ -3,6 +3,56 @@
 {% block title %}HomePage{% endblock %}
 
 {% block content %}
-<h1>This is your homepage</h1>
+<body class="bg-light">
 
+    <div class="container vh-100 bg-white">
+
+            <h1 class="pt-4 text-center">La tua DashBoard</h1>
+
+        <hr class="border border-success mt-0 opacity-45">
+        <div class="row mt-5 text-center container-sm">
+
+
+            <!-- SPESA COLUMN -->
+            <div class="col border-end mb-3">
+                <h3>La spesa</h3>
+                <hr class="border border-success opacity-50">
+                <div class="vstack gap-2 ms-auto">
+
+                    <a class="btn btn-outline-success btn-lg " href="#">Scontrini</a>
+                    <a class="btn btn-outline-success btn-lg " href="#">Lista Spesa</a>
+
+                </div>
+            </div>
+
+            <!-- PROFILO COLUMN -->
+            <div class="col border-start border-end mb-3">
+                <h3>Profilo</h3>
+                <hr class="border border-primary opacity-50">
+                <div class="vstack gap-2 ms-auto">
+
+                    <a class="btn btn-outline-primary btn-lg " href="{{ url_for('profile_page') }}" >Dati Personali</a>
+                    <a class="btn btn-outline-primary btn-lg " href="#">Dieta</a>
+                    <a class="btn btn-outline-primary btn-lg " href="#">Attività Fisica</a>
+                    <a class="btn btn-outline-primary btn-lg " href="#">Salute</a>
+
+                </div>
+            </div>
+
+            <!-- ANALYTICS COLUMN -->
+            <div class="col border-start mb-3">
+                <h3 class="align-items-top">Analytics</h3>
+                <hr class="border border-warning opacity-50">
+                <div class="vstack gap-2 ms-auto">
+
+                    <a class="btn btn-outline-warning btn-lg " href="#">Gestione</a>
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</body>
 {% endblock %}
