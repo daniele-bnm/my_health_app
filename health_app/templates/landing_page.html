@@ -3,19 +3,19 @@
 {% block title %}Login Page{% endblock %}
 
 {% block content %}
-
-    <div class="container">
+<body class="bg-light">
+    <div class="container-sm vh-100 bg-white">
       <h1 class="text-center mt-2 mb-4">
         Sana Spesa
       </h1>
       <div class="row" style="margin-bottom:32px">
         <div class="col-md-6">
-      <p class="lead">
-        Sana Spesa è una veloce webApp perfetta per tenere traccia delle tue abitudini quotidiane e soprattutto della tua spesa! Riceverai consigili su cosa mangiare e quanto per raggiungere i tuoi obiettivi, per una vita più salutare. Tieni traccia dei tuoi risultati con grafici all'avanguardia che mostrano il tuo progresso.
-      </p>
+          <p class="lead">
+            Sana Spesa è una veloce webApp perfetta per tenere traccia delle tue abitudini quotidiane e soprattutto della tua spesa! Riceverai consigili su cosa mangiare e quanto per raggiungere i tuoi obiettivi, per una vita più salutare. Tieni traccia dei tuoi risultati con grafici all'avanguardia che mostrano il tuo progresso.
+          </p>
         </div>
         <div class="d-none d-md-block col-md-6">
-        <img src="/static/spesa.jpg" style="height:320px;border-radius:4px;">
+          <img src="/static/spesa.jpg" style="height:320px;border-radius:4px;">
         </div>
       </div>
 
@@ -27,5 +27,6 @@
         {% endif %}
       </div>
     </div>
+</body>
 
 {% endblock %}

@@ -5,7 +5,11 @@
       Sana Spesa
     </a>
     {% if current_user.is_authenticated %}
-      <a class="btn btn-primary btn-sm" href="{{ url_for('logout_page') }}">Esci</a>
+      <div>
+        Ciao, <b>{{ current_user.Name }}</b>
+        <span class="mx-1">|</span>
+        <a class="btn btn-light btn-sm" href="{{ url_for('logout_page') }}">Esci</a>
+      </div>
     {% else %}
       <div>
         <a class="btn btn-primary btn-sm" href="{{ url_for('login_page') }}">Accedi</a>
