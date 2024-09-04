@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 from health_app import  app, db
-from health_app.forms import LoginForm, RegistrationForm
+from health_app.forms import LoginForm, RegistrationForm, ProfileForm
 from health_app.models import Consumer
 
 @app.route('/')
@@ -13,6 +13,24 @@ def landing_page():
 @login_required
 def home_page():
     return render_template('home.html')
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile_page():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        current_user.Email = form.email.data
+        current_user.Name = form.name.data
+        current_user.Surname = form.surname.data
+        current_user.DateOfBirth = form.date_of_birth.data
+        current_user.PlaceOfBirth = form.place_of_birth.data
+        current_user.Gender = form.gender.data
+        current_user.Address = form.address.data
+
+        db.session.commit()
+        flash('Profile updated!', 'success')
+        return redirect(url_for('home_page'))
+    return render_template('app_dir/profile.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
