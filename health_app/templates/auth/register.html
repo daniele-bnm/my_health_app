@@ -3,59 +3,57 @@
 {% block title %}Registration Page{% endblock %}
 
 {% block content %}
-
-  <div class="container" >
-    <div class="mt-5 mb-3">
-      <h1 class="text-center">Crea il tuo Account</h1>
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="text-center mb-4">Crea il tuo Account</h1>
+          <form method="POST" class="form-register needs-validation" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              {{ form.email.label(class="form-label") }}
+              {{ form.email(class="form-control", placeholder="Indirizzo Email") }}
+              <div class="invalid-feedback">Please enter a valid email address.</div>
+            </div>
+            <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              {{ form.password(class="form-control", placeholder="Password") }}
+              <div class="invalid-feedback">Please enter a password.</div>
+            </div>
+            <div class="mb-3">
+              {{ form.confirm_password.label(class="form-label") }}
+              {{ form.confirm_password(class="form-control", placeholder="Conferma Password") }}
+              <div class="invalid-feedback">Passwords do not match.</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control", placeholder="Nome") }}
+              </div>
+              <div class="col">
+                {{ form.surname.label(class="form-label") }}
+                {{ form.surname(class="form-control", placeholder="Cognome") }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.date_of_birth.label(class="form-label") }}
+                {{ form.date_of_birth(class="form-control", placeholder="dd/mm/yyyy") }}
+              </div>
+              <div class="col">
+                {{ form.gender.label(class="form-label") }}
+                {{ form.gender(class="form-select", required=True) }}
+              </div>
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary w-100 mb-3">Crea Account</button>
+            <div class="text-center">
+              <p>Hai già un account? <a href="{{ url_for('login_page') }}" class="link-primary">Accedi</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-      <form method="POST" class="form-register">
-        {{ form.hidden_tag() }}
-        <div class="mb-3">
-          {{ form.email.label(class="form-label") }}
-          {{ form.email(class="form-control", placeholder="Indirizzo Email") }}
-        </div>
-        <div class="mb-3">
-          {{ form.password.label(class="form-label") }}
-          {{ form.password(class="form-control", placeholder="Password") }}
-        </div>
-        <div class="mb-3">
-          {{ form.confirm_password.label(class="form-label") }}
-          {{ form.confirm_password(class="form-control", placeholder="Conferma Password") }}
-        </div>
-        <div class="row mb-3">
-          <div class="col">
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control", placeholder="Nome") }}
-          </div>
-          <div class="col">
-            {{ form.surname.label(class="form-label") }}
-            {{ form.surname(class="form-control", placeholder="Cognome") }}
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col">
-            {{ form.date_of_birth.label(class="form-label") }}
-            {{ form.date_of_birth(class="form-control", placeholder="dd/mm/yyyy") }}
-          </div>
-          <div class="col">
-            {{ form.gender.label(class="form-label") }}
-            {{ form.gender(class="form-select") }}
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col">
-            {{ form.submit(class="btn btn-lg btn-block btn-primary text-center") }}
-          </div>
-          <div class="col d-flex justify-content-end align-items-end">
-
-              <h6 class="mb-1">Hai già un account?</h6>
-              <a class="btn btn-secondary btn-sm ms-2" href="{{ url_for('register_page') }}">Accedi</a>
-
-          </div>
-        </div>
-
-
-      </form>
   </div>
+</div>
 {% endblock %}

@@ -7,7 +7,7 @@
           {% endblock %}
       </title>
    </head>
-   <body>
+   <body class="bg-light">
         {% include 'nav.html' %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -22,13 +22,13 @@
             {% endif %}
         {% endwith %}
 
-        {% block content %}
-            <!--
-                 ###########################################
-                 Content from children pages is placed here
-                 ##########################################
-            -->
-        {% endblock %}
+            {% block content %}
+                <!--
+                     ###########################################
+                     Content from children pages is placed here
+                     ##########################################
+                -->
+            {% endblock %}
 
         {% include 'bootstrap/jsBundle.html' %}
    </body>
