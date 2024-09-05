@@ -7,3 +7,4 @@ class Config:
     STATIC_FOLDER = 'health_app/static'
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://dan:miaKeyLong@localhost/nextcartdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
