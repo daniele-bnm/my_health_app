@@ -37,6 +37,7 @@ class Consumer(db.Model, UserMixin):
     def get_id(self):
         return self.ConsumerId
 
+
 class BodyComposition(db.Model):
     __tablename__ = 'BodyComposition'
 

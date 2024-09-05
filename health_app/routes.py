@@ -1,9 +1,10 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 
 from health_app import  app, db
 from health_app.forms import LoginForm, RegistrationForm, ProfileForm
 from health_app.models import Consumer
+
 
 @app.route('/')
 def landing_page():
@@ -17,23 +18,42 @@ def home_page():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile_page():
-    form = ProfileForm()
+    form = ProfileForm(obj=current_user)
     if form.validate_on_submit():
-        current_user.Email = form.email.data
         current_user.Name = form.name.data
         current_user.Surname = form.surname.data
+        current_user.Email = form.email.data
         current_user.DateOfBirth = form.date_of_birth.data
         current_user.PlaceOfBirth = form.place_of_birth.data
         current_user.Gender = form.gender.data
         current_user.Address = form.address.data
-
         db.session.commit()
-        flash('Profile updated!', 'success')
+        flash('Consumer info updated successfully', 'success')
         return redirect(url_for('home_page'))
+    elif request.method == 'GET':
+        form.name.data = current_user.Name
+        form.surname.data = current_user.Surname
+        form.email.data = current_user.Email
+        form.date_of_birth.data = current_user.DateOfBirth
+        form.place_of_birth.data = current_user.PlaceOfBirth
+        form.gender.data = current_user.Gender
+        form.address.data = current_user.Address
+    if form.errors != {}:
+        for err_msg in form.errors.values():
+            msg = f'{err_msg}'
+            flash(f'{msg[2:-2]}', 'danger')
+
     return render_template('app_dir/profile.html', form=form)
+
+
+            ##########################
+            # Login and Registration #
+            ##########################
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
+    if current_user.is_authenticated:
+        return redirect(url_for('home_page'))
     form = RegistrationForm()
     if form.validate_on_submit():
         # Create a new user with the form data
@@ -52,12 +72,14 @@ def register_page():
     if form.errors != {}:
         for err_msg in form.errors.values():
             msg = f'{err_msg}'
-            flash(f'There was an error: {msg[2:-2]}', 'warning')
+            flash(f'{msg[2:-2]}', 'warning')
     return render_template('auth/register.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    if current_user.is_authenticated:
+        return redirect(url_for('home_page'))
     form=LoginForm()
     if form.validate_on_submit():
         user = Consumer.query.filter_by(Email=form.email.data).first()
@@ -69,7 +91,7 @@ def login_page():
     if form.errors != {}:
         for err_msg in form.errors.values():
             msg = f'{err_msg}'
-            flash(f'There was an error: {msg[2:-2]}', 'warning')
+            flash(f'{msg[2:-2]}', 'warning')
     return render_template('auth/login.html', form=form)
 
 @app.route('/logout')
