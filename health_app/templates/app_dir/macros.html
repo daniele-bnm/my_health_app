@@ -1,7 +1,10 @@
 {% macro render_field(field) %}
         <div class="mb-3">
-
             {{ field.label(class="form-label") }}
-            {{ field(class="form-control", placeholder=field.label.text) }}
+            {% if field.type == 'SelectField' %}
+                {{ field(class="form-select", placeholder=field.label.text) }}
+            {% else %}
+                {{ field(class="form-control", placeholder=field.label.text) }}
+            {% endif %}
         </div>
 {% endmacro %}
