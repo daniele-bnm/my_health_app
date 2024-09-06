@@ -1,36 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}Login Page{% endblock %}
-
+{% block title %}Sana Spesa{% endblock %}
 {% block content %}
-
-     <!-- Refactored code -->
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-10 text-center">
-      <h1 class="display-4 fw-bold mb-4">Sana Spesa</h1>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10 text-center">
+        <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">Sana Spesa</h1>
+        <p class="lead text-muted animate__animated animate__fadeIn">La tua guida per una spesa sana e consapevole</p>
+      </div>
+    </div>
+    <div class="row align-items-center mt-4">
+      <div class="col-md-6 order-md-2 animate__animated animate__fadeInRight">
+        <img src="/static/spesa.jpg" class="img-fluid rounded shadow-lg" alt="Spesa Image">
+      </div>
+      <div class="col-md-6 order-md-1 mt-3 mt-md-0 animate__animated animate__fadeInLeft">
+        <p class="fs-5 text-muted">
+          Sana Spesa è una webApp perfetta per tenere traccia delle tue abitudini quotidiane e della tua spesa! Ricevi consigli su cosa mangiare e quanto per raggiungere i tuoi obiettivi. I grafici interattivi mostrano il tuo progresso in modo chiaro e intuitivo, aiutandoti a vivere una vita più salutare.
+        </p>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Consigli alimentari personalizzati</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Traccia il tuo progresso</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Interfaccia intuitiva e moderna</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-10 text-center animate__animated animate__fadeInUp">
+        {% if current_user.is_authenticated %}
+          <a class="btn btn-primary btn-lg" href="{{ url_for('home_page') }}">Entra</a>
+        {% else %}
+          <a class="btn btn-primary btn-lg" href="{{ url_for('login_page') }}">Inizia ora</a>
+        {% endif %}
+      </div>
     </div>
   </div>
-  <div class="row align-items-center">
-    <div class="col-md-6">
-      <p class="fs-5 text-muted">
-        Sana Spesa è una veloce webApp perfetta per tenere traccia delle tue abitudini quotidiane e soprattutto della tua spesa! Riceverai consigili su cosa mangiare e quanto per raggiungere i tuoi obiettivi, per una vita più salutare. Tieni traccia dei tuoi risultati con grafici all'avanguardia che mostrano il tuo progresso.
-      </p>
-    </div>
-    <div class="col-md-6 d-none d-md-block">
-      <img src="/static/spesa.jpg" class="img-fluid rounded" alt="Spesa Image">
-    </div>
-  </div>
-  <div class="row justify-content-center mt-5">
-    <div class="col-md-10 text-center">
-      {% if current_user.is_authenticated %}
-        <a class="btn btn-primary btn-lg" href="{{ url_for('home_page') }}">Entra</a>
-      {% else %}
-        <a class="btn btn-primary btn-lg" href="{{ url_for('login_page') }}">Entra</a>
-      {% endif %}
-    </div>
-  </div>
-</div>
-
-
 {% endblock %}
