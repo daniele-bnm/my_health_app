@@ -79,30 +79,30 @@ def physical_activity_page():
         flash('Activity added successfully!', 'success')
         return redirect(url_for('physical_activity_page'))
 
-    return render_template('app_dir/physical_activity.html', form=form, context=context)
 
+    # Check if the form is for deletion
+    if request.method == 'POST' and 'delete_activity_id' in request.form:
+        activity_id = request.form.get('delete_activity_id')
+        consumer_id = request.form.get('delete_consumer_id')
+        date = request.form.get('delete_date')
 
-@app.route('/edit-activity/<int:activity_id>', methods=['GET', 'POST'])
-def edit_activity(activity_id):
-    activity = PhysicalActivity.query.get_or_404(activity_id)
+        # Find the activity to delete
+        activity_to_delete = PhysicalActivity.query.filter_by(
+            ConsumerId=consumer_id,
+            ActivityId=activity_id,
+            Date=date
+        ).first()
 
-    if request.method == 'POST':
-        activity.ActivityType = request.form.get('ActivityType')
-        activity.DurationMinutes = request.form.get('DurationMinutes')
-        activity.Date = request.form.get('Date')
+        # If the activity exists, delete it
+        if activity_to_delete:
+            db.session.delete(activity_to_delete)
+            db.session.commit()
+        else:
+            flash('An error occurred. Activity not found.', 'danger')
 
-        db.session.commit()
-
-        flash('Activity updated successfully!', 'success')
         return redirect(url_for('physical_activity_page'))
 
-    return render_template('edit_activity.html', activity=activity)
-
-@app.route('/delete-activity/<int:activity_id>', methods=['POST'])
-def delete_activity(activity_id):
-    # Implement delete logic here
-    pass
-    return render_template('app_dir/physical_activity.html')
+    return render_template('app_dir/physical_activity.html', form=form, context=context)
 
             ##########################
             # Login and Registration #
