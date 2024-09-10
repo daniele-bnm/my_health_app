@@ -4,61 +4,69 @@
 
 {% block content %}
 
- <!-- Hero Section -->
+<!-- Hero Section -->
 <div class="container-fluid p-0">
-  <div class="row justify-content-center align-items-center" style="height: 20vh; background-color: #f7f7f7;">
+  <div class="row justify-content-center align-items-center bg-light" style="height: 25vh;">
     <div class="col-md-6 text-center">
-      <h1 class="display-4">La tua DashBoard</h1>
-      <hr class="border border-success w-25 mx-auto opacity-50">
+      <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">La tua DashBoard</h1>
+      <hr class="border border-success w-25 mx-auto opacity-50 animate__animated animate__fadeInDown">
     </div>
   </div>
 </div>
 
 <!-- Dashboard Cards -->
 <div class="container mt-5">
-  <div class="row justify-content-center">
+  <div class="row justify-content-center g-4">
+
     <!-- SPESA COLUMN -->
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm border-0" style="min-height: 300px;">
-        <div class="card-body d-flex flex-column justify-content-top align-items-center">
-          <h5 class="card-title">La spesa</h5>
-          <hr class="border border-success opacity-50 w-50 my-3">
-
-            <a class="btn btn-outline-success btn-lg mt-3 w-50" href="#">Scontrini</a>
-            <a class="btn btn-outline-success btn-lg mt-3 w-50" href="#">Lista Spesa</a>
-
+    <div class="col-lg-4 col-md-6">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-start text-center">
+          <div>
+            <h5 class="card-title animate__animated animate__fadeInUp">La spesa</h5>
+            <hr class="border border-success opacity-50 w-50 mx-auto my-3 animate__animated animate__fadeInUp">
+          </div>
+          <div>
+            <a class="btn btn-outline-success btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="#">Scontrini</a>
+            <a class="btn btn-outline-success btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="#">Lista Spesa</a>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- PROFILO COLUMN -->
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm border-0" style="min-height: 300px;">
-        <div class="card-body d-flex flex-column justify-content-top align-items-center">
-          <h5 class="card-title">Profilo</h5>
-          <hr class="border border-primary opacity-50 w-50 my-3">
-
-            <a class="btn btn-outline-primary btn-lg mt-3 w-50" href="{{ url_for('profile_page') }}">Dati Personali</a>
-            <a class="btn btn-outline-primary btn-lg mt-3 w-50" href="#">Dieta</a>
-            <a class="btn btn-outline-primary btn-lg mt-3 w-50" href="#">Attività Fisica</a>
-            <a class="btn btn-outline-primary btn-lg mt-3 w-50" href="#">Salute</a>
-
+    <div class="col-lg-4 col-md-6">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-start text-center">
+          <div>
+            <h5 class="card-title animate__animated animate__fadeInUp">Profilo</h5>
+            <hr class="border border-primary opacity-50 w-50 mx-auto my-3 animate__animated animate__fadeInUp">
+          </div>
+          <div>
+            <a class="btn btn-outline-primary btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="{{ url_for('profile_page') }}">Dati Personali</a>
+            <a class="btn btn-outline-primary btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="{{ url_for('physical_activity_page') }}">Attività Fisica</a>
+            <a class="btn btn-outline-primary btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="{{ url_for('health_and_diet_page') }}">Salute e Dieta</a>
+            <a class="btn btn-outline-primary btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="#">Famiglia</a>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- ANALYTICS COLUMN -->
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm border-0" style="min-height: 300px;">
-        <div class="card-body d-flex flex-column justify-content-top align-items-center">
-          <h5 class="card-title">Analytics</h5>
-          <hr class="border border-warning opacity-50 w-50 my-3">
-
-            <a class="btn btn-outline-warning btn-lg mt-3 w-50" href="#">Gestione</a>
-
+    <div class="col-lg-4 col-md-6">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body d-flex flex-column justify-content-start text-center">
+          <div>
+            <h5 class="card-title animate__animated animate__fadeInUp">Analytics</h5>
+            <hr class="border border-warning opacity-50 w-50 mx-auto my-3 animate__animated animate__fadeInUp">
+          </div>
+          <div>
+            <a class="btn btn-outline-warning btn-lg mt-3 w-75 animate__animated animate__fadeInUp" href="#">Gestione</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
+

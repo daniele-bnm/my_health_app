@@ -2,35 +2,72 @@
 
 {% block title %}Profilo{% endblock %}
 
-{% from 'app_dir/macros.html' import render_field %}
 {% block content %}
 
-<div class="container-fluid mt-5 mb-5">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="mt-2 mb-3">
-              <h1 class="pt-4 text-center">Profilo personale di {{ current_user.Name }}</h1>
-            </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+          <h1 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Profilo personale di {{ current_user.Name }}</h1>
             <form method="POST" action="{{ url_for('profile_page') }}">
                 {{ form.hidden_tag() }}
-                {% for field in form %}
-                    {% if (field.widget.input_type != 'hidden' and field.name != 'csrf_token' and field.name != 'submit') %}
-                        {{ render_field(field) }}
-                    {% endif %}
-                {% endfor %}
+                <div class="mb-3">
+                  {{ form.email.label(class="form-label") }}
+                  {{ form.email(class="form-control form-control-lg", required=True, type="email") }}
+                  <div class="invalid-feedback">Per favore, inserisci un indirizzo email valido.</div>
+                </div>
                 <div class="row mb-3">
-                    <div class="col">
-                        {{ form.submit(class="btn btn-lg btn-block btn-primary text-center w-50") }}
-                    </div>
-                    <div class="col d-flex justify-content-end align-items-end">
+                  <div class="col">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control form-control-lg", placeholder="Nome", required=True) }}
+                    <div class="invalid-feedback">Per favore, inserisci il tuo nome.</div>
+                  </div>
+                  <div class="col">
+                    {{ form.surname.label(class="form-label") }}
+                    {{ form.surname(class="form-control form-control-lg", placeholder="Cognome", required=True) }}
+                    <div class="invalid-feedback">Per favore, inserisci il tuo cognome.</div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    {{ form.date_of_birth.label(class="form-label") }}
+                    {{ form.date_of_birth(class="form-control form-control-lg", placeholder="dd/mm/yyyy", required=True, type="date") }}
+                    <div class="invalid-feedback">Per favore, inserisci la tua data di nascita.</div>
+                  </div>
+                  <div class="col">
+                    {{ form.gender.label(class="form-label") }}
+                    {{ form.gender(class="form-select form-control-lg", required=True) }}
+                    <div class="invalid-feedback">Per favore, seleziona il tuo genere.</div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    {{ form.place_of_birth.label(class="form-label") }}
+                    {{ form.place_of_birth(class="form-control form-control-lg", placeholder="Luogo di nascita", required=True) }}
+                    <div class="invalid-feedback">Per favore, inserisci il tuo luogo di nascita.</div>
+                  </div>
+                  <div class="col">
+                    {{ form.address.label(class="form-label") }}
+                    {{ form.address(class="form-control form-control-lg", placeholder="Indirizzo", required=True) }}
+                    <div class="invalid-feedback">Per favore, inserisci il tuo indirizzo.</div>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col d-flex justify-content-start align-items-end">
                         <a class="btn btn-secondary btn ms-2" href="{{ url_for('home_page') }}">Torna alla Home</a>
                     </div>
+                    <div class="col d-flex justify-content-end align-items-end">
+                        {{ form.submit(class="btn btn-lg btn-block btn-primary text-center w-50") }}
+                    </div>
                 </div>
+
             </form>
+
         </div>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}
