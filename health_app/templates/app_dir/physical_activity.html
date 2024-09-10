@@ -46,6 +46,8 @@
             </div>
         </div>
 
+     {% include 'modal.html' %}
+
         <!-- Table for Past Activities -->
         <div class="card shadow-lg">
             <div class="card-body p-4">
@@ -67,9 +69,15 @@
                                 <td>{{ activity.ActivityType }}</td>
                                 <td>{{ activity.DurationMinutes }}</td>
                                 <td>
-                                    <a href="{{ url_for('delete_activity', activity_id=activity.ActivityId) }}" class="btn btn-sm btn-outline-danger delete-btn">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    <form method="POST" action="{{ url_for('physical_activity_page') }}" class="delete-form">
+                                        <input type="hidden" name="delete_activity_id" value="{{ activity.ActivityId }}">
+                                        <input type="hidden" name="delete_consumer_id" value="{{ activity.ConsumerId }}">
+                                        <input type="hidden" name="delete_date" value="{{ activity.Date }}">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+
                                 </td>
                             </tr>
                             {% endfor %}
