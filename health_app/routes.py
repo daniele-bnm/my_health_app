@@ -2,8 +2,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 
 from health_app import  app, db
-from health_app.forms import LoginForm, RegistrationForm, ProfileForm
-from health_app.models import Consumer
+from health_app.forms import LoginForm, RegistrationForm, ProfileForm, HealthDietForm, PhysicalActivityForm
+from health_app.models import Consumer, PhysicalActivity, Activities
 
 
 @app.route('/')
@@ -29,7 +29,7 @@ def profile_page():
         current_user.Address = form.address.data
         db.session.commit()
         flash('Consumer info updated successfully', 'success')
-        return redirect(url_for('home_page'))
+        return redirect(url_for('profile_page'))
     elif request.method == 'GET':
         form.name.data = current_user.Name
         form.surname.data = current_user.Surname
@@ -45,6 +45,64 @@ def profile_page():
 
     return render_template('app_dir/profile.html', form=form)
 
+@app.route('/health_and_diet', methods=['GET', 'POST'])
+@login_required
+def health_and_diet_page():
+    form = HealthDietForm(obj=current_user)
+    #if form.validate_on_submit():
+
+    return render_template('app_dir/health_and_diet.html')
+
+
+@app.route('/phisical_activity', methods=['GET', 'POST'])
+@login_required
+def physical_activity_page():
+    form = PhysicalActivityForm()
+
+    user_activities = PhysicalActivity.query.filter_by(ConsumerId=current_user.ConsumerId).order_by(
+        PhysicalActivity.Date.desc()).all()
+    activities = Activities.query.all()
+    context = {'user_activities': user_activities, 'activities': activities}
+
+    if form.validate_on_submit():
+        new_activity = PhysicalActivity(
+            ConsumerId=current_user.ConsumerId,
+            ActivityId=form.activity_id.data,
+            ActivityType=form.activity_type.data,
+            DurationMinutes=form.duration_minutes.data,
+            Date=form.date.data
+        )
+
+        db.session.add(new_activity)
+        db.session.commit()
+
+        flash('Activity added successfully!', 'success')
+        return redirect(url_for('physical_activity_page'))
+
+    return render_template('app_dir/physical_activity.html', form=form, context=context)
+
+
+@app.route('/edit-activity/<int:activity_id>', methods=['GET', 'POST'])
+def edit_activity(activity_id):
+    activity = PhysicalActivity.query.get_or_404(activity_id)
+
+    if request.method == 'POST':
+        activity.ActivityType = request.form.get('ActivityType')
+        activity.DurationMinutes = request.form.get('DurationMinutes')
+        activity.Date = request.form.get('Date')
+
+        db.session.commit()
+
+        flash('Activity updated successfully!', 'success')
+        return redirect(url_for('physical_activity_page'))
+
+    return render_template('edit_activity.html', activity=activity)
+
+@app.route('/delete-activity/<int:activity_id>', methods=['POST'])
+def delete_activity(activity_id):
+    # Implement delete logic here
+    pass
+    return render_template('app_dir/physical_activity.html')
 
             ##########################
             # Login and Registration #

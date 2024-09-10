@@ -1,7 +1,7 @@
 from random import choice
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SelectField, SubmitField
+from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from health_app.models import Consumer
 
@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
     surname = StringField(label='Cognome:', validators=[DataRequired(message='Please enter your surname')])
     date_of_birth = DateField(label='Data di Nascita:', validators=[DataRequired(message='Please enter your date of birth')])
     gender = SelectField(label='Genere:', choices=[('', 'Seleziona'), ('male', 'Maschio'), ('female', 'Femmina')], validators=[DataRequired(message='Please select your gender')])
-    submit = SubmitField(label='Registrati')
+    submit = SubmitField(label='Crea Account')
 
 class LoginForm(FlaskForm):
 
@@ -41,3 +41,12 @@ class ProfileForm(FlaskForm):
         if Consumer.query.filter_by(Email=email_to_check.data).first() and email_to_check.data != self.email.data:
             raise ValidationError('This email has been registered already!')
 
+class HealthDietForm(FlaskForm):
+    submit = SubmitField(label='Salva')
+
+class PhysicalActivityForm(FlaskForm):
+    activity_id = HiddenField('Activity Id')
+    activity_type = StringField('Activity', validators=[DataRequired()])
+    duration_minutes = IntegerField('Duration (Minutes)', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
+    submit = SubmitField('Add Activity')
