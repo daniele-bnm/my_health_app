@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Physical Activity Tracker{% endblock %}
+
+{% block content %}
+ <div class="container mt-5">
+        <!-- Page Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Physical Activity Tracker</h1>
+            <p class="lead text-muted animate__animated animate__fadeInDown">Track your daily physical activities and monitor your progress.</p>
+        </div>
+
+        <!-- Input Form for New Physical Activity -->
+        <div class="card shadow-lg mb-5">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4">Register New Activity</h4>
+                <form method="POST" action="{{ url_for('physical_activity_page') }}" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.activity_type.label }}
+                            {{ form.activity_type(class="form-control", list="activitiesList",  id="activity_type", placeholder="Type to search...") }}
+                            <datalist id="activitiesList">
+                                {% for activity in context.activities %}
+                                    <option data-id="{{ activity.ActivityId }}" value="{{ activity.SpecificActivity }}">
+                                {% endfor %}
+                            </datalist>
+                            {{ form.activity_id(id="activity_id") }}
+                            <div class="invalid-feedback">Please select an activity.</div>
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.duration_minutes.label }}
+                            {{ form.duration_minutes(class="form-control", min="1", placeholder="e.g., 30") }}
+                            <div class="invalid-feedback">Please enter the duration.</div>
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.date.label }}
+                            {{ form.date(class="form-control") }}
+                            <div class="invalid-feedback">Please select a date.</div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        {{ form.submit(class="btn btn-success w-50 animate__animated animate__fadeInUp") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table for Past Activities -->
+        <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4">Your Past Activities</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Activity Type</th>
+                                <th scope="col">Duration (Minutes)</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in context.user_activities %}
+                            <tr class="animate__animated animate__fadeInUp">
+                                <td>{{ activity.Date.strftime('%d-%m-%y') }}</td>
+                                <td>{{ activity.ActivityType }}</td>
+                                <td>{{ activity.DurationMinutes }}</td>
+                                <td>
+                                    <a href="{{ url_for('delete_activity', activity_id=activity.ActivityId) }}" class="btn btn-sm btn-outline-danger delete-btn">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Validation -->
+    <script>
+        (function() {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+    <script>
+        document.getElementById('activity_type').addEventListener('input', function() {
+            var options = document.getElementById('activitiesList').options;
+            var hiddenField = document.getElementById('activity_id');
+            hiddenField.value = '';
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === this.value) {
+                    hiddenField.value = options[i].getAttribute('data-id');
+                    break;
+                }
+            }
+        });
+    </script>
+
+{% endblock %}
