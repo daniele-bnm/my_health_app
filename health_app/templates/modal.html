@@ -1,0 +1,24 @@
+<div id="confirmModal" class="modal fade" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmBtn" class="btn btn-danger">Yes, Delete</button>
+                <button id="cancelBtn" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openConfirmModal(button) {
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        modal.show();
+
+        document.getElementById('confirmBtn').onclick = function() {
+            button.closest('form').submit();
+        };
+    }
+</script>
