@@ -10,8 +10,15 @@
             <p class="lead text-muted animate__animated animate__fadeInDown">Track your daily physical activities and monitor your progress.</p>
         </div>
 
+
         <!-- Input Form for New Physical Activity -->
-        <div class="card shadow-lg mb-5">
+     <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Physical Activity</li>
+          </ol>
+     </nav>
+     <div class="card shadow-lg mb-5">
             <div class="card-body p-4">
                 <h4 class="card-title mb-4">Register New Activity</h4>
                 <form method="POST" action="{{ url_for('physical_activity_page') }}" class="needs-validation" novalidate>
@@ -40,7 +47,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-4">
-                        {{ form.submit(class="btn btn-success w-50 animate__animated animate__fadeInUp") }}
+                        {{ form.submit(class="btn btn-success w-50 animate__animated animate__fadeIn") }}
                     </div>
                 </form>
             </div>
