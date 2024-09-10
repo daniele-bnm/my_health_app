@@ -50,7 +50,7 @@
                 <div class="invalid-feedback">Per favore, seleziona il tuo genere.</div>
               </div>
             </div>
-            <button type="submit" class="btn btn-lg btn-primary w-100 animate__animated animate__fadeInUp">Crea Account</button>
+            {{ form.submit(class="btn btn-lg btn-primary w-100 animate__animated animate__fadeInUp") }}
           </form>
           <div class="text-center mt-4 animate__animated animate__fadeInUp">
             <p>Hai già un account? <a href="{{ url_for('login_page') }}" class="link-primary fw-bold">Accedi</a></p>
