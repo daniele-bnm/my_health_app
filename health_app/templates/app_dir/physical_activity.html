@@ -25,14 +25,8 @@
                     {{ form.hidden_tag() }}
                     <div class="row g-3">
                         <div class="col-md-6">
-                            {{ form.activity_type.label }}
-                            {{ form.activity_type(class="form-control", list="activitiesList",  id="activity_type", placeholder="Type to search...") }}
-                            <datalist id="activitiesList">
-                                {% for activity in context.activities %}
-                                    <option data-id="{{ activity.ActivityId }}" value="{{ activity.SpecificActivity }}">
-                                {% endfor %}
-                            </datalist>
-                            {{ form.activity_id(id="activity_id") }}
+                            {{ form.activity_id.label }}
+                            {{ form.activity_id(class="form-select activity_id", id="activity_id") }}
                             <div class="invalid-feedback">Please select an activity.</div>
                         </div>
                         <div class="col-md-3">
@@ -97,6 +91,13 @@
 
     <!-- Form Validation -->
     <script>
+        $(document).ready(function() {
+            $('.activity_id').select2({
+                placeholder: "Type to search..."
+            });
+        });
+    </script>
+    <script>
         (function() {
             'use strict'
             const forms = document.querySelectorAll('.needs-validation')
@@ -111,18 +112,6 @@
             })
         })()
     </script>
-    <script>
-        document.getElementById('activity_type').addEventListener('input', function() {
-            var options = document.getElementById('activitiesList').options;
-            var hiddenField = document.getElementById('activity_id');
-            hiddenField.value = '';
-            for (var i = 0; i < options.length; i++) {
-                if (options[i].value === this.value) {
-                    hiddenField.value = options[i].getAttribute('data-id');
-                    break;
-                }
-            }
-        });
-    </script>
+
 
 {% endblock %}

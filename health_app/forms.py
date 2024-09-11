@@ -45,8 +45,7 @@ class HealthDietForm(FlaskForm):
     submit = SubmitField(label='Salva')
 
 class PhysicalActivityForm(FlaskForm):
-    activity_id = HiddenField('Activity Id')
-    activity_type = StringField('Activity', validators=[DataRequired()])
+    activity_id = SelectField('Activity', choices=[],validators=[DataRequired()])
     duration_minutes = IntegerField('Duration (Minutes)', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()])
     submit = SubmitField('Add Activity')

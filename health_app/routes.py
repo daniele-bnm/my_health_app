@@ -59,16 +59,23 @@ def health_and_diet_page():
 def physical_activity_page():
     form = PhysicalActivityForm()
 
+    # Get the user's activities
     user_activities = PhysicalActivity.query.filter_by(ConsumerId=current_user.ConsumerId).order_by(
         PhysicalActivity.Date.desc()).all()
+    context = {'user_activities': user_activities}
+
     activities = Activities.query.all()
-    context = {'user_activities': user_activities, 'activities': activities}
+    activities.insert(0, Activities(ActivityId='', SpecificActivity=''))
+
+    # Populate the choices for the activity_type select field
+    form.activity_id.choices = [(activity.ActivityId, activity.SpecificActivity) for activity in
+                                activities]
 
     if form.validate_on_submit():
         new_activity = PhysicalActivity(
             ConsumerId=current_user.ConsumerId,
             ActivityId=form.activity_id.data,
-            ActivityType=form.activity_type.data,
+            ActivityType=Activities.query.filter_by(ActivityId=form.activity_id.data).first().SpecificActivity,
             DurationMinutes=form.duration_minutes.data,
             Date=form.date.data
         )
