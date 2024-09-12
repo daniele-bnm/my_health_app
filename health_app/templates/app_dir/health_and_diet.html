@@ -3,5 +3,141 @@
 {% block title %}Health and Diet{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Health and Diet</h1>
+<div class="container mt-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Physical Activity Tracker</h1>
+        <p class="lead text-muted animate__animated animate__fadeInDown">Track your diet, health conditions, and physical activities.</p>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Health & Diet</li>
+        </ol>
+    </nav>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Left Column: Diet and Add Health Condition -->
+        <div class="col-lg-4">
+            <!-- Select or Modify Diet Type -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">Your Diet Type</h4>
+
+                    {% if context.selected_diet %}
+                        <!-- Display selected diet with option to modify -->
+                        <div id="diet-display">
+                            <p class="lead">Current Diet: <strong>{{ context.selected_diet.Diet }}</strong></p>
+                            <button id="modify-diet-button" class="btn btn-warning">Modify</button>
+                        </div>
+
+                        <!-- Form to modify diet (hidden initially) -->
+                        <div id="diet-form" style="display: none;">
+                            <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="needs-validation" novalidate>
+                                {{ form.hidden_tag() }}
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        {{ form.diet_type.label }}
+                                        {{ form.diet_type(class="form-select diet_type", id="diet_type") }}
+                                        <div class="invalid-feedback">Please select a diet type.</div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button type="submit" id="save-diet-button" class="btn btn-success w-50 animate__animated animate__fadeIn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    {% else %}
+                        <!-- Show the form if no diet is selected -->
+                        <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="needs-validation" novalidate>
+                            {{ form.hidden_tag() }}
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    {{ form.diet_type.label }}
+                                    {{ form.diet_type(class="form-select diet_type", id="diet_type") }}
+                                    <div class="invalid-feedback">Please select a diet type.</div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                {{ form.submit(class="btn btn-primary w-50 animate__animated animate__fadeIn") }}
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Add New Health Condition -->
+            <div class="card shadow-lg mb-5">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">Add Health Condition</h4>
+                    <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                {{ form.health_conditions.label }}
+                                {{ form.health_conditions(class="form-select health_conditions", id="health_conditions") }}
+                                <div class="invalid-feedback">Please select a health conditions.</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit" id="add-condition-button" class="btn btn-success w-50 animate__animated animate__fadeIn">Add Condition</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% include 'modal.html' %}
+        <!-- Right Column: Health Conditions List -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">Your Health Conditions</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Condition Name</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for condition in context.user_conditions %}
+                                <tr class="animate__animated animate__fadeInUp">
+                                    <td>{{ condition.HealthConditions }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="delete_condition">
+                                            <input type="hidden" name="condition_id" value="{{ condition.HealthConditionId }}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to toggle the modify/save functionality -->
+    <script>
+        document.getElementById('modify-diet-button').addEventListener('click', function() {
+            document.getElementById('diet-display').style.display = 'none';
+            document.getElementById('diet-form').style.display = 'block';
+        });
+
+        $(document).ready(function() {
+            $('#health_conditions').select2({
+                placeholder: "Select or type to search..."
+            });
+        });
+    </script>
+</div>
 {% endblock %}
