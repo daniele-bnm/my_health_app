@@ -1,7 +1,7 @@
 from random import choice
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, HiddenField
+from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from health_app.models import Consumer
 
@@ -42,7 +42,9 @@ class ProfileForm(FlaskForm):
             raise ValidationError('This email has been registered already!')
 
 class HealthDietForm(FlaskForm):
-    submit = SubmitField(label='Salva')
+    diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired()])
+    health_conditions = SelectField('Health Conditions', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 class PhysicalActivityForm(FlaskForm):
     activity_id = SelectField('Activity', choices=[],validators=[DataRequired()])

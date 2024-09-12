@@ -67,7 +67,7 @@
                             {% for activity in context.user_activities %}
                             <tr class="animate__animated animate__fadeInUp">
                                 <td>{{ activity.Date.strftime('%d-%m-%y') }}</td>
-                                <td>{{ activity.ActivityType }}</td>
+                                <td>{{ activity.SpecificActivity }}</td>
                                 <td>{{ activity.DurationMinutes }}</td>
                                 <td>
                                     <form method="POST" action="{{ url_for('physical_activity_page') }}" class="delete-form">

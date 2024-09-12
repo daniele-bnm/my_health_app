@@ -22,7 +22,6 @@ class Consumer(db.Model, UserMixin):
     Family = db.Column(db.String(45), db.ForeignKey('Family.FamilyId'), nullable=True)
     Role = db.Column(db.String(45), nullable=True)
     Address = db.Column(db.String(45), nullable=True)
-    Age = db.Column(db.Integer, nullable=True)
     BodyCompositions = db.relationship('BodyComposition', lazy=True)
 
     @property
@@ -69,7 +68,7 @@ class PhysicalActivity(db.Model):
     ActivityId = db.Column(db.Integer, db.ForeignKey('Activities.ActivityId'), primary_key=True, nullable=False)
     ConsumerId = db.Column(db.Integer, db.ForeignKey('Consumer.ConsumerId'), primary_key=True, nullable=False)
     Date = db.Column(db.Date, primary_key=True, nullable=False)
-    ActivityType = db.Column(db.String(50), nullable=False)
+    SpecificActivity = db.Column(db.Text, nullable=False)
     DurationMinutes = db.Column(db.Integer, nullable=False)
 
 class Activities(db.Model):

@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from health_app import  app, db
 from health_app.forms import LoginForm, RegistrationForm, ProfileForm, HealthDietForm, PhysicalActivityForm
-from health_app.models import Consumer, PhysicalActivity, Activities
+from health_app.models import Consumer, PhysicalActivity, Activities, HealthConditions, Diet, DietConsumerChoices, ConsumerHealthConditions
 
 
 @app.route('/')
@@ -48,10 +48,45 @@ def profile_page():
 @app.route('/health_and_diet', methods=['GET', 'POST'])
 @login_required
 def health_and_diet_page():
-    form = HealthDietForm(obj=current_user)
-    #if form.validate_on_submit():
 
-    return render_template('app_dir/health_and_diet.html')
+    form = HealthDietForm()
+
+        # Populate the diet type choices
+    form.diet_type.choices = [diet.DietId for diet in Diet.query.all()]
+
+        # Get the user's health conditions and diet
+    user_conditions = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId).all()
+    selected_diet = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).first()
+    context = {'user_conditions': user_conditions, 'selected_diet': selected_diet}
+
+        # Populate the health condition choices
+    form.health_conditions.choices = [hc.HealthConditionId for hc in HealthConditions.query.all()]
+
+    chosen_diet = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).first()
+
+        # Save selected diet
+    if form.validate_on_submit():
+        if chosen_diet:
+            chosen_diet.Diet = form.diet_type.data
+        else:
+            new_diet = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=form.diet_type.data)
+            db.session.add(new_diet)
+
+        db.session.commit()
+
+        flash('Your selections have been saved!', 'success')
+        return redirect(url_for('health_and_diet_page'))
+
+    if request.method == 'POST' and 'delete_condition' in request.form:
+        condition_id = request.form['condition_id']
+        condition = ConsumerHealthConditions.query.filter_by(Cosnumer=current_user.ConsumerId, HealthConditions=condition_id).first()
+        if condition:
+            db.session.delete(condition)
+            db.session.commit()
+            flash('Health condition deleted successfully!', 'success')
+            return redirect(url_for('health_and_diet_page'))
+
+    return render_template('app_dir/health_and_diet.html', form=form, context=context)
 
 
 @app.route('/phisical_activity', methods=['GET', 'POST'])
@@ -75,7 +110,7 @@ def physical_activity_page():
         new_activity = PhysicalActivity(
             ConsumerId=current_user.ConsumerId,
             ActivityId=form.activity_id.data,
-            ActivityType=Activities.query.filter_by(ActivityId=form.activity_id.data).first().SpecificActivity,
+            SpecificActivity=Activities.query.filter_by(ActivityId=form.activity_id.data).first().SpecificActivity,
             DurationMinutes=form.duration_minutes.data,
             Date=form.date.data
         )
