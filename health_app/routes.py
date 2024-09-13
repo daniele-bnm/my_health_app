@@ -95,7 +95,7 @@ def physical_activity_page():
     form = PhysicalActivityForm()
 
     # Get the user's activities
-    user_activities = PhysicalActivity.query.filter_by(ConsumerId=current_user.ConsumerId).order_by(
+    user_activities = PhysicalActivity.query.filter_by(Consumer=current_user.ConsumerId).order_by(
         PhysicalActivity.Date.desc()).all()
     context = {'user_activities': user_activities}
 
@@ -107,15 +107,15 @@ def physical_activity_page():
                                 activities]
 
     if form.validate_on_submit():
-        new_activity = PhysicalActivity(
-            ConsumerId=current_user.ConsumerId,
-            ActivityId=form.activity_id.data,
+        new_physical_activity = PhysicalActivity(
+            Consumer=current_user.ConsumerId,
+            Activity=form.activity_id.data,
             SpecificActivity=Activities.query.filter_by(ActivityId=form.activity_id.data).first().SpecificActivity,
             DurationMinutes=form.duration_minutes.data,
             Date=form.date.data
         )
 
-        db.session.add(new_activity)
+        db.session.add(new_physical_activity)
         db.session.commit()
 
         flash('Activity added successfully!', 'success')
@@ -130,8 +130,8 @@ def physical_activity_page():
 
         # Find the activity to delete
         activity_to_delete = PhysicalActivity.query.filter_by(
-            ConsumerId=consumer_id,
-            ActivityId=activity_id,
+            Consumer=consumer_id,
+            Activity=activity_id,
             Date=date
         ).first()
 

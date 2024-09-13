@@ -64,16 +64,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for activity in context.user_activities %}
+                            {% for user_activity in context.user_activities %}
                             <tr class="animate__animated animate__fadeInUp">
-                                <td>{{ activity.Date.strftime('%d-%m-%y') }}</td>
-                                <td>{{ activity.SpecificActivity }}</td>
-                                <td>{{ activity.DurationMinutes }}</td>
+                                <td>{{ user_activity.Date.strftime('%d-%m-%y') }}</td>
+                                <td>{{ user_activity.SpecificActivity }}</td>
+                                <td>{{ user_activity.DurationMinutes }}</td>
                                 <td>
                                     <form method="POST" action="{{ url_for('physical_activity_page') }}" class="delete-form">
-                                        <input type="hidden" name="delete_activity_id" value="{{ activity.ActivityId }}">
-                                        <input type="hidden" name="delete_consumer_id" value="{{ activity.ConsumerId }}">
-                                        <input type="hidden" name="delete_date" value="{{ activity.Date }}">
+                                        <input type="hidden" name="delete_activity_id" value="{{ user_activity.Activity }}">
+                                        <input type="hidden" name="delete_consumer_id" value="{{ user_activity.Consumer }}">
+                                        <input type="hidden" name="delete_date" value="{{ user_activity.Date }}">
                                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
                                             <i class="bi bi-trash"></i>
                                         </button>

@@ -65,8 +65,8 @@ class Diet(db.Model):
 
 class PhysicalActivity(db.Model):
     __tablename__ = 'PhysicalActivity'
-    ActivityId = db.Column(db.Integer, db.ForeignKey('Activities.ActivityId'), primary_key=True, nullable=False)
-    ConsumerId = db.Column(db.Integer, db.ForeignKey('Consumer.ConsumerId'), primary_key=True, nullable=False)
+    Activity = db.Column(db.Integer, db.ForeignKey('Activities.ActivityId'), primary_key=True, nullable=False)
+    Consumer = db.Column(db.Integer, db.ForeignKey('Consumer.ConsumerId'), primary_key=True, nullable=False)
     Date = db.Column(db.Date, primary_key=True, nullable=False)
     SpecificActivity = db.Column(db.Text, nullable=False)
     DurationMinutes = db.Column(db.Integer, nullable=False)
@@ -90,8 +90,8 @@ class HealthConditions(db.Model):
 
 class NutrientHealthConditions(db.Model):
     __tablename__ = 'NutrientHealthConditions'
-    HealthConditionId = db.Column(db.String(100), db.ForeignKey('HealthConditions.HealthConditionId'), primary_key=True, nullable=False)
-    NutrientId = db.Column(db.String(100), db.ForeignKey('NutritionalInformation.NutrientId', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
+    HealthCondition = db.Column(db.String(100), db.ForeignKey('HealthConditions.HealthConditionId'), primary_key=True, nullable=False)
+    Nutrient = db.Column(db.String(100), db.ForeignKey('NutritionalInformation.NutrientId', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
     MinQuantity = db.Column(db.Integer, default=None)
     MaxQuantity = db.Column(db.Integer, default=None)
     #db.Boolean for PercentKCal and UoMperKg columns, as they are defined as tinyint(1) in the MySQL query, which is
@@ -114,7 +114,7 @@ class Product(db.Model):
     __tablename__ = 'Product'
     ProductId = db.Column(db.String(20), primary_key=True, nullable=False)
     Description = db.Column(db.String(200), default=None)
-    ProductCategoryId = db.Column(db.String(100), db.ForeignKey('ProductCategory.ProductCategoryId', ondelete='CASCADE', onupdate='CASCADE'), default=None)
+    ProductCategory = db.Column(db.String(100), db.ForeignKey('ProductCategory.ProductCategoryId', ondelete='CASCADE', onupdate='CASCADE'), default=None)
 
 class ProductAllergens(db.Model):
     __tablename__ = 'ProductAllergens'
@@ -161,8 +161,8 @@ class Purchases(db.Model):
     Date = db.Column(db.DateTime, default=None)
     Quantity = db.Column(db.Integer, default=None)
     Price = db.Column(db.Numeric(10, 2), default=None)
-    ProductId = db.Column(db.String(20), db.ForeignKey('Product.ProductId'), primary_key=True, nullable=False)
-    Family_FamilyId = db.Column(db.Integer, db.ForeignKey('Family.FamilyId'), default=None)
+    Product = db.Column(db.String(20), db.ForeignKey('Product.ProductId'), primary_key=True, nullable=False)
+    Family = db.Column(db.Integer, db.ForeignKey('Family.FamilyId'), default=None)
 
 class Waste(db.Model):
     __tablename__ = 'Waste'
