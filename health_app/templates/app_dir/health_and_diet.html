@@ -6,8 +6,8 @@
 <div class="container mt-5">
     <!-- Page Header -->
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Physical Activity Tracker</h1>
-        <p class="lead text-muted animate__animated animate__fadeInDown">Track your diet, health conditions, and physical activities.</p>
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Health & Diet</h1>
+        <p class="lead text-muted animate__animated animate__fadeInDown">Track your diet and your health conditions</p>
     </div>
 
     <!-- Breadcrumb Navigation -->
@@ -27,10 +27,10 @@
                 <div class="card-body p-4">
                     <h4 class="card-title mb-4">Your Diet Type</h4>
 
-                    {% if context.selected_diet %}
+                    {% if context.selected_diets %}
                         <!-- Display selected diet with option to modify -->
                         <div id="diet-display">
-                            <p class="lead">Current Diet: <strong>{{ context.selected_diet.Diet }}</strong></p>
+                            <p class="lead">Current Diet: <strong>{{ context.selected_diets.Diet }}</strong></p>
                             <button id="modify-diet-button" class="btn btn-warning">Modify</button>
                         </div>
 
@@ -109,8 +109,8 @@
                                 <tr class="animate__animated animate__fadeInUp">
                                     <td>{{ condition.HealthConditions }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="delete_condition">
-                                            <input type="hidden" name="condition_id" value="{{ condition.HealthConditionId }}">
+                                        <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="delete-form">
+                                            <input type="hidden" name="delete_condition" value="{{ condition.HealthConditions }}">
                                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
                                                 <i class="bi bi-trash"></i>
                                             </button>
