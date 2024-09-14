@@ -1,10 +1,14 @@
+import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 
 from health_app import  app, db
-from health_app.forms import LoginForm, RegistrationForm, ProfileForm, HealthDietForm, PhysicalActivityForm
-from health_app.models import Consumer, PhysicalActivity, Activities, HealthConditions, Diet, DietConsumerChoices, ConsumerHealthConditions
-
+from health_app.forms import LoginForm, RegistrationForm, ProfileForm, PhysicalActivityForm, HealthConditionsForm, \
+    DietForm, JoinFamilyForm, BodyCompositionForm
+from health_app.models import Consumer, Family, PhysicalActivity, Activities, HealthConditions, Diet, \
+    DietConsumerChoices, ConsumerHealthConditions, BodyComposition
+import uuid
 
 @app.route('/')
 def landing_page():
@@ -15,6 +19,84 @@ def landing_page():
 def home_page():
     return render_template('home.html')
 
+
+# View Family Page - Show the current family code and options to join/create/leave family
+# View Family Page - Show the current family code and options to join/create/leave family
+@app.route('/family', methods=['GET', 'POST'])
+@login_required
+def family_page():
+    # Initialize the join form
+    join_form = JoinFamilyForm()
+
+    # Handle join family form submission
+    if join_form.validate_on_submit():
+        family_to_join = Family.query.filter_by(FamilyId=join_form.existing_family_code.data).first()
+
+        if family_to_join:
+            # Update the current user's family and increment the members count
+            current_user.Family = family_to_join.FamilyId
+            family_to_join.Members += 1
+            db.session.commit()
+            flash(f'You have successfully joined the family with code {family_to_join.FamilyId}', 'success')
+        else:
+            flash('Family code does not exist. Please try again.', 'danger')
+
+        return redirect(url_for('family_page'))
+
+    # Fetch family members if the user is part of a family
+    family_members = None
+    if current_user.Family:
+        family_members = Consumer.query.filter_by(Family=current_user.Family).all()
+
+    # Render the template, passing the join_form to the HTML
+    return render_template('app_dir/family.html', join_form=join_form, family_members=family_members)
+
+
+# Route to create a new family
+@app.route('/create_family', methods=['POST'])
+@login_required
+def create_family():
+    # Generate a unique family ID using UUID
+    family_id = str(uuid.uuid4())[:8]  # Shorten UUID for simplicity
+    new_family = Family(FamilyId=family_id, Members=1)
+    db.session.add(new_family)
+    db.session.commit()
+
+    # Update current user to the new family
+    current_user.Family = new_family.FamilyId
+    db.session.commit()
+
+    flash(f'You have created a new family with the code {new_family.FamilyId}', 'success')
+    return redirect(url_for('family_page'))
+
+
+# Route to leave the family
+@app.route('/leave_family', methods=['POST'])
+@login_required
+def leave_family():
+    # Get the user's current family
+    current_family = Family.query.filter_by(FamilyId=current_user.Family).first()
+
+    if current_family:
+        # Reduce the family member count
+        current_family.Members -= 1
+        # Remove the user from the family
+        current_user.Family = None
+
+        # If no members are left, delete the family
+        if current_family.Members == 0:
+            db.session.delete(current_family)
+
+        db.session.commit()
+        flash('You have left the family.', 'warning')
+    else:
+        flash('Error leaving family. You are not part of any family.', 'danger')
+
+    return redirect(url_for('family_page'))
+
+####################
+#   Other routes   #
+####################
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile_page():
@@ -49,45 +131,65 @@ def profile_page():
 @login_required
 def health_and_diet_page():
 
-    form = HealthDietForm()
+    dform = DietForm()
+    hform = HealthConditionsForm()
 
-        # Populate the diet type choices
-    form.diet_type.choices = [diet.DietId for diet in Diet.query.all()]
-
-        # Get the user's health conditions and diet
+    # Get the user's health conditions and diet
     user_conditions = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId).all()
-    selected_diet = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).first()
-    context = {'user_conditions': user_conditions, 'selected_diet': selected_diet}
+    selected_diets = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).all()
+    context = {'user_conditions': user_conditions, 'selected_diets': selected_diets}
 
-        # Populate the health condition choices
-    form.health_conditions.choices = [hc.HealthConditionId for hc in HealthConditions.query.all()]
+    # Populate the diet type choices
+    diets = Diet.query.all()
+    dform.diet_type.choices = [(diet.DietId, diet.Description) for diet in diets]
+    for diet in selected_diets:
+        dform.diet_type.choices.remove((diet.DietId, diet.Description))
 
-    chosen_diet = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).first()
+    # Populate the health condition choices
+    hcs = HealthConditions.query.all()
+    hform.health_conditions.choices = [hc.HealthConditionId for hc in hcs]
+    for hc in hcs:
+        hform.health_conditions.choices.remove(hc.HealthConditionId)
 
-        # Save selected diet
-    if form.validate_on_submit():
-        if chosen_diet:
-            chosen_diet.Diet = form.diet_type.data
+
+    # Save selected diet
+    if dform.validate_on_submit():
+        if False:
+            ss=1;
         else:
-            new_diet = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=form.diet_type.data)
+            new_diet = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=dform.diet_type.data)
             db.session.add(new_diet)
-
-        db.session.commit()
+            db.session.commit()
 
         flash('Your selections have been saved!', 'success')
         return redirect(url_for('health_and_diet_page'))
 
+
+
     if request.method == 'POST' and 'delete_condition' in request.form:
-        condition_id = request.form['condition_id']
-        condition = ConsumerHealthConditions.query.filter_by(Cosnumer=current_user.ConsumerId, HealthConditions=condition_id).first()
+        condition_id = request.form.get('delete_condition')
+        condition = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId, HealthConditions=condition_id).first()
         if condition:
             db.session.delete(condition)
             db.session.commit()
             flash('Health condition deleted successfully!', 'success')
             return redirect(url_for('health_and_diet_page'))
+        else:
+            flash('Health condition not found!', 'danger')
+            return redirect(url_for('health_and_diet_page'))
 
-    return render_template('app_dir/health_and_diet.html', form=form, context=context)
+    if dform.errors != {} :
+        for err_msg in dform.errors.values():
+            msg = f'{err_msg}'
+            flash(f'Diet form: {msg[2:-2]}', 'warning')
 
+    if hform.errors != {} :
+        for err_msg in hform.errors.values():
+            msg = f'{err_msg}'
+            flash(f'Health conditions form: {msg[2:-2]}', 'warning')
+
+
+    return render_template('app_dir/health_and_diet.html', context=context)
 
 @app.route('/phisical_activity', methods=['GET', 'POST'])
 @login_required
@@ -95,16 +197,13 @@ def physical_activity_page():
     form = PhysicalActivityForm()
 
     # Get the user's activities
-    user_activities = PhysicalActivity.query.filter_by(Consumer=current_user.ConsumerId).order_by(
-        PhysicalActivity.Date.desc()).all()
+    user_activities = PhysicalActivity.query.filter_by(Consumer=current_user.ConsumerId).order_by(PhysicalActivity.Date.desc()).all()
     context = {'user_activities': user_activities}
 
+    # Populate the activity choices
     activities = Activities.query.all()
     activities.insert(0, Activities(ActivityId='', SpecificActivity=''))
-
-    # Populate the choices for the activity_type select field
-    form.activity_id.choices = [(activity.ActivityId, activity.SpecificActivity) for activity in
-                                activities]
+    form.activity_id.choices = [(activity.ActivityId, activity.SpecificActivity) for activity in activities]
 
     if form.validate_on_submit():
         new_physical_activity = PhysicalActivity(
@@ -124,15 +223,10 @@ def physical_activity_page():
 
     # Check if the form is for deletion
     if request.method == 'POST' and 'delete_activity_id' in request.form:
-        activity_id = request.form.get('delete_activity_id')
-        consumer_id = request.form.get('delete_consumer_id')
-        date = request.form.get('delete_date')
-
+        physical_activity_id = request.form.get('delete_activity_id')
         # Find the activity to delete
         activity_to_delete = PhysicalActivity.query.filter_by(
-            Consumer=consumer_id,
-            Activity=activity_id,
-            Date=date
+            PhysicalActivityId=physical_activity_id
         ).first()
 
         # If the activity exists, delete it
@@ -146,10 +240,45 @@ def physical_activity_page():
 
     return render_template('app_dir/physical_activity.html', form=form, context=context)
 
-            ##########################
-            # Login and Registration #
-            ##########################
+@app.route('/update_body_composition', methods=['GET', 'POST'])
+@login_required
+def body_composition_page():
+    form = BodyCompositionForm()
 
+    # Fetch past data for the current user
+    past_data = BodyComposition.query.filter_by(Consumer=current_user.ConsumerId).order_by(BodyComposition.Date.desc()).all()
+
+    # Pre-fill the form's height with the latest height, if available
+    last_record = BodyComposition.query.filter_by(Consumer=current_user.ConsumerId).order_by(BodyComposition.Date.desc()).first()
+    if last_record and request.method == 'GET':
+        form.height.data = last_record.Height
+
+    # Calculate BMI based on the most recent data
+    bmi = None
+    if last_record:
+        weight = last_record.Weight
+        height_meters = last_record.Height / 100  # Convert height to meters
+        if height_meters > 0:
+            bmi = round(weight / (height_meters ** 2), 2)
+
+    # Process form submission
+    if form.validate_on_submit():
+        new_entry = BodyComposition(
+            Consumer=current_user.ConsumerId,
+            Weight=form.weight.data,
+            Height=form.height.data,
+            Date=datetime.datetime.now()
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+        flash('Your body composition has been updated.', 'success')
+        return redirect(url_for('body_composition_page'))
+
+    return render_template('app_dir/body_composition.html', form=form, past_data=past_data, bmi=bmi)
+
+##########################
+# Login and Registration #
+##########################
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     if current_user.is_authenticated:
@@ -174,7 +303,6 @@ def register_page():
             msg = f'{err_msg}'
             flash(f'{msg[2:-2]}', 'warning')
     return render_template('auth/register.html', form=form)
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():

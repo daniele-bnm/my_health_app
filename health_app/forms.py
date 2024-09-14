@@ -1,8 +1,8 @@
 from random import choice
 
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, SelectMultipleField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, DecimalField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, NumberRange
 from health_app.models import Consumer
 
 
@@ -41,8 +41,11 @@ class ProfileForm(FlaskForm):
         if Consumer.query.filter_by(Email=email_to_check.data).first() and email_to_check.data != self.email.data:
             raise ValidationError('This email has been registered already!')
 
-class HealthDietForm(FlaskForm):
+class DietForm(FlaskForm):
     diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class HealthConditionsForm(FlaskForm):
     health_conditions = SelectField('Health Conditions', choices=[], validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -51,3 +54,13 @@ class PhysicalActivityForm(FlaskForm):
     duration_minutes = IntegerField('Duration (Minutes)', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()])
     submit = SubmitField('Add Activity')
+
+class JoinFamilyForm(FlaskForm):
+    existing_family_code = StringField('Family Code', validators=[DataRequired(), Length(min=4, max=8)])
+    submit = SubmitField('Join Family')
+
+
+class BodyCompositionForm(FlaskForm):
+    weight = DecimalField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0, message="Weight must be a positive value")])
+    height = DecimalField('Height (cm)', validators=[DataRequired(), NumberRange(min=0, message="Height must be a positive value")])
+    submit = SubmitField('Update Body Composition')
