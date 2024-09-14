@@ -19,7 +19,7 @@ class Consumer(db.Model, UserMixin):
     DateOfBirth = db.Column(db.Date, nullable=False)
     PlaceOfBirth = db.Column(db.String(45), nullable=True)
     Gender = db.Column(db.Enum('male', 'female', name='enum_gender'), nullable=False)
-    Family = db.Column(db.String(45), db.ForeignKey('Family.FamilyId'), nullable=True)
+    Family = db.Column(db.String(10), db.ForeignKey('Family.FamilyId'), nullable=True)
     Role = db.Column(db.String(45), nullable=True)
     Address = db.Column(db.String(45), nullable=True)
     BodyCompositions = db.relationship('BodyComposition', lazy=True)
@@ -48,7 +48,7 @@ class BodyComposition(db.Model):
 
 class Family(db.Model):
     __tablename__ = 'Family'
-    FamilyId = db.Column(db.Integer, primary_key=True, nullable=False)
+    FamilyId = db.Column(db.String(10), primary_key=True, nullable=False)
     Description = db.Column(db.String(255), nullable=True)
     Members = db.Column(db.Integer, nullable=True)
 
@@ -65,9 +65,10 @@ class Diet(db.Model):
 
 class PhysicalActivity(db.Model):
     __tablename__ = 'PhysicalActivity'
-    Activity = db.Column(db.Integer, db.ForeignKey('Activities.ActivityId'), primary_key=True, nullable=False)
-    Consumer = db.Column(db.Integer, db.ForeignKey('Consumer.ConsumerId'), primary_key=True, nullable=False)
-    Date = db.Column(db.Date, primary_key=True, nullable=False)
+    PhysicalActivityId = db.Column(db.Integer, primary_key=True, nullable=False)
+    Activity = db.Column(db.Integer, db.ForeignKey('Activities.ActivityId'), nullable=False)
+    Consumer = db.Column(db.Integer, db.ForeignKey('Consumer.ConsumerId'), nullable=False)
+    Date = db.Column(db.Date, nullable=False)
     SpecificActivity = db.Column(db.Text, nullable=False)
     DurationMinutes = db.Column(db.Integer, nullable=False)
 
@@ -162,7 +163,7 @@ class Purchases(db.Model):
     Quantity = db.Column(db.Integer, default=None)
     Price = db.Column(db.Numeric(10, 2), default=None)
     Product = db.Column(db.String(20), db.ForeignKey('Product.ProductId'), primary_key=True, nullable=False)
-    Family = db.Column(db.Integer, db.ForeignKey('Family.FamilyId'), default=None)
+    Family = db.Column(db.String(10), db.ForeignKey('Family.FamilyId'), default=None)
 
 class Waste(db.Model):
     __tablename__ = 'Waste'

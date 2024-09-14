@@ -71,9 +71,7 @@
                                 <td>{{ user_activity.DurationMinutes }}</td>
                                 <td>
                                     <form method="POST" action="{{ url_for('physical_activity_page') }}" class="delete-form">
-                                        <input type="hidden" name="delete_activity_id" value="{{ user_activity.Activity }}">
-                                        <input type="hidden" name="delete_consumer_id" value="{{ user_activity.Consumer }}">
-                                        <input type="hidden" name="delete_date" value="{{ user_activity.Date }}">
+                                        <input type="hidden" name="delete_activity_id" value="{{ user_activity.PhysicalActivityId }}">
                                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
                                             <i class="bi bi-trash"></i>
                                         </button>
