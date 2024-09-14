@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Family Code{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body pt-5 px-5 pb-3">
+
+                    <h1 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Family Management</h1>
+
+                    <!-- If user is already in a family -->
+                    {% if current_user.Family %}
+                        <h4 class="text-center mb-4">Your current family code is: <span class="badge rounded-pill bg-info mx-3 fs-3">{{ current_user.Family }}</span></h4>
+                        <div class="d-flex row mb-3">
+                            <div class="d-flex justify-content-center mb-5">
+                                <a class="btn btn-secondary btn ms-2" href="{{ url_for('home_page') }}">Torna alla Home</a>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <form method="POST" action="{{ url_for('leave_family') }}">
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="openConfirmModal(this)">Leave Family</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+
+                    {% else %}
+                        <!-- If user is not in a family, show options to create or join one -->
+                        <h5 class="text-center mb-4">You are not part of any family yet!</h5>
+                        <div class="d-flex justify-content-center mb-4">
+                            <button class="btn btn-success btn-lg mx-2" data-bs-toggle="modal" data-bs-target="#createFamilyModal">
+                                Create New Family
+                            </button>
+                            <button class="btn btn-primary btn-lg mx-2" data-bs-toggle="modal" data-bs-target="#joinFamilyModal">
+                                Join Existing Family
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <!-- Create New Family Modal -->
+                    <div class="modal fade" id="createFamilyModal" tabindex="-1" aria-labelledby="createFamilyModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="createFamilyModalLabel">Create New Family</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to create a new family? A new family code will be generated for you.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" action="{{ url_for('create_family') }}">
+                                        <button type="submit" class="btn btn-success">Create Family</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Join Existing Family Modal -->
+                    <div class="modal fade" id="joinFamilyModal" tabindex="-1" aria-labelledby="joinFamilyModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="joinFamilyModalLabel">Join Existing Family</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" action="{{ url_for('family_page') }}">
+                                        {{ join_form.hidden_tag() }}
+                                        <div class="mb-3">
+                                            {{ join_form.existing_family_code.label(class="form-label") }}
+                                            {{ join_form.existing_family_code(class="form-control form-control-lg", placeholder="Enter family code") }}
+                                            <div class="invalid-feedback">Please enter a valid family code.</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-secondary">Join Family</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Include the confirmation modal for leaving family -->
+                    {% include 'modal.html' %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card to display family members -->
+    {% if current_user.Family and family_members %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h4 class="text-center mb-3 fw-bold">Family Members</h4>
+                    <ul class="list-group list-group-flush">
+                        {% for member in family_members %}
+                            {% if member.ConsumerId == current_user.ConsumerId %}
+                        <li class="list-group-item text-center"> <strong >{{ member.Name }} {{ member.Surname }}</strong> </li>
+                            {% else %}
+                                <li class="list-group-item text-center">{{ member.Name }}  {{ member.Surname }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
