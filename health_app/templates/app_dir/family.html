@@ -6,20 +6,28 @@
 
 <div class="container mt-5">
 
+     <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Family Management</h1>
+            <p class="lead text-muted animate__animated animate__fadeInDown">Create, join or manage your Family.</p>
+     </div>
+
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8">
+            <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Family Management</li>
+                  </ol>
+            </nav>
             <div class="card shadow-lg border-0">
-                <div class="card-body pt-5 px-5 pb-3">
-
-                    <h1 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Family Management</h1>
+                <div class="card-body pt-4 px-5 pb-3">
 
                     <!-- If user is already in a family -->
                     {% if current_user.Family %}
-                        <h4 class="text-center mb-4">Your current family code is: <span class="badge rounded-pill bg-info mx-3 fs-3">{{ current_user.Family }}</span></h4>
-                        <div class="d-flex row mb-3">
-                            <div class="d-flex justify-content-center mb-5">
-                                <a class="btn btn-secondary btn ms-2" href="{{ url_for('home_page') }}">Torna alla Home</a>
-                            </div>
+                        <h4 class="text-center mb-3">Your family code is: <span class="badge rounded-pill bg-info mx-3 fs-3">{{ current_user.Family }}</span></h4>
+                        <h6 class="lead text-center mb-5">Invite your family members and share the code ;)</h6>
+                        <div class="d-flex row mb-2">
+
                             <div class="d-flex justify-content-center">
                                 <form method="POST" action="{{ url_for('leave_family') }}">
                                     <div class="d-flex justify-content-center">
@@ -106,7 +114,7 @@
                     <ul class="list-group list-group-flush">
                         {% for member in family_members %}
                             {% if member.ConsumerId == current_user.ConsumerId %}
-                        <li class="list-group-item text-center"> <strong >{{ member.Name }} {{ member.Surname }}</strong> </li>
+                                <li class="list-group-item text-center"> <strong >{{ member.Name }} {{ member.Surname }}</strong> </li>
                             {% else %}
                                 <li class="list-group-item text-center">{{ member.Name }}  {{ member.Surname }}</li>
                             {% endif %}
