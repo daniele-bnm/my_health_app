@@ -51,7 +51,6 @@ def family_page():
     # Render the template, passing the join_form to the HTML
     return render_template('app_dir/family.html', join_form=join_form, family_members=family_members)
 
-
 # Route to create a new family
 @app.route('/create_family', methods=['POST'])
 @login_required
@@ -68,7 +67,6 @@ def create_family():
 
     flash(f'You have created a new family with the code {new_family.FamilyId}', 'success')
     return redirect(url_for('family_page'))
-
 
 # Route to leave the family
 @app.route('/leave_family', methods=['POST'])
@@ -240,7 +238,7 @@ def physical_activity_page():
 
     return render_template('app_dir/physical_activity.html', form=form, context=context)
 
-@app.route('/update_body_composition', methods=['GET', 'POST'])
+@app.route('/body_composition', methods=['GET', 'POST'])
 @login_required
 def body_composition_page():
     form = BodyCompositionForm()
@@ -275,6 +273,21 @@ def body_composition_page():
         return redirect(url_for('body_composition_page'))
 
     return render_template('app_dir/body_composition.html', form=form, past_data=past_data, bmi=bmi)
+
+@app.route('/delete_body_composition', methods=['POST'])
+@login_required
+def delete_body_composition():
+
+    if request.method == 'POST' and 'delete_record' in request.form:
+        body_comp_date = request.form.get('delete_record')
+        record_to_delete = BodyComposition.query.filter_by(Consumer=current_user.ConsumerId, Date=body_comp_date).first()
+        if record_to_delete:
+            db.session.delete(record_to_delete)
+            db.session.commit()
+        else:
+            flash('An error occurred. Couldn\'t delete.', 'danger')
+
+    return redirect(url_for('body_composition_page'))
 
 ##########################
 # Login and Registration #
