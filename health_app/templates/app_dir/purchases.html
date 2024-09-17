@@ -21,7 +21,7 @@
                 </nav>
 
                 <!-- Add Purchase Button -->
-                <button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#addPurchaseModal">Add New Purchase</button>
+                <button class="btn btn-success mb-4" id="addPurchaseBtn">Add New Purchase</button>
 
                 <!-- Past Purchases List -->
 
@@ -47,44 +47,10 @@
     </div>
 
 
-    <!-- Modal for Adding Purchase / Redirect to Family if not in one already-->
-    <div class="modal fade" id="addPurchaseModal" tabindex="-1" aria-labelledby="addPurchaseLabel" aria-hidden="true">
+    <!-- Modal redirecting to Family if not in one already-->
+    <div class="modal fade" id="notInFamilyModal" tabindex="-1" aria-labelledby="addPurchaseLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                {% if current_user.Family %}
-                    <form method="POST">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addPurchaseLabel">Add New Purchase</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            {{ form.hidden_tag() }}
-                            <div class="mb-3">
-                                {{ form.purchase_id.label(class="form-label") }}
-                                {{ form.purchase_id(class="form-control", placeholder="Enter Receipt ID") }}
-                            </div>
-                            <div>
-                                {{ form.date.label(class="form-label") }}
-                                {{ form.date(class="form-control", placeholder="Enter Purchase Date") }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.product.label(class="form-label") }}
-                                {{ form.product(class="form-select, select2") }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.quantity.label(class="form-label") }}
-                                {{ form.quantity(class="form-control", placeholder="Enter Quantity") }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.price.label(class="form-label") }}
-                                {{ form.price(class="form-control", placeholder="Enter Price") }}
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            {{ form.submit(class="btn btn btn-primary") }}
-                        </div>
-                    </form>
-                {% else %}
                     <div class="modal-header">
                         <h5 class="modal-title" id="familyAlertModalLabel">Join a Family</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -96,7 +62,6 @@
                     <div class="modal-footer">
                         <a href="{{ url_for('family_page') }}" class="btn btn-primary w-100">Go to Family Page</a>
                     </div>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -127,10 +92,18 @@
     <script>
         $(document).ready(
             function() {
-                $('.select2').select2({
-                    dropdownParent: $('#addPurchaseModal')
+                // Add event listener for the "Add Purchase" button
+                $('#addPurchaseBtn').click(function() {
+                    var userInFamily = {{ 'true' if current_user.Family else 'false' | tojson }};
+                    if (userInFamily) {
+                        window.location.href = "{{ url_for('new_purchase') }}";
+                    } else {
+                        // If user is not in a family, show the modal
+                        $('#notInFamilyModal').modal('show');
+                    }
                 });
 
+                // Add event listener for the "View Purchase Details"
                 $('#purchaseModal').on('show.bs.modal', function(event) {
                     var button = $(event.relatedTarget);
                     var purchaseId = button.data('id');
