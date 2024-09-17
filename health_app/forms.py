@@ -1,5 +1,3 @@
-from random import choice
-
 from flask_wtf import FlaskForm
 from wtforms import IntegerField, StringField, PasswordField, DateField, SelectField, SubmitField, DecimalField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, NumberRange
@@ -56,7 +54,7 @@ class PhysicalActivityForm(FlaskForm):
     submit = SubmitField('Add Activity')
 
 class JoinFamilyForm(FlaskForm):
-    existing_family_code = StringField('Family Code', validators=[DataRequired(), Length(min=4, max=8)])
+    existing_family_code = StringField('Family Code', validators=[DataRequired()])
     submit = SubmitField('Join Family')
 
 
@@ -64,3 +62,12 @@ class BodyCompositionForm(FlaskForm):
     weight = DecimalField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0, message="Weight must be a positive value")])
     height = DecimalField('Height (cm)', validators=[DataRequired(), NumberRange(min=0, message="Height must be a positive value")])
     submit = SubmitField('Update Body Composition')
+
+
+class AddPurchaseForm(FlaskForm):
+    purchase_id = StringField('Receipt ID', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
+    product = SelectField('Product', choices=[], validators=[DataRequired()])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    price = DecimalField('Price of the single item (n.xx €)', places=2, validators=[DataRequired()])
+    submit = SubmitField('Add Purchase')

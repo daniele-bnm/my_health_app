@@ -1,14 +1,12 @@
-import datetime
-
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
-
+from sqlalchemy import func
 from health_app import  app, db
 from health_app.forms import LoginForm, RegistrationForm, ProfileForm, PhysicalActivityForm, HealthConditionsForm, \
-    DietForm, JoinFamilyForm, BodyCompositionForm
+    DietForm, JoinFamilyForm, BodyCompositionForm, AddPurchaseForm
 from health_app.models import Consumer, Family, PhysicalActivity, Activities, HealthConditions, Diet, \
-    DietConsumerChoices, ConsumerHealthConditions, BodyComposition
-import uuid
+    DietConsumerChoices, ConsumerHealthConditions, BodyComposition, Product, Purchases
+import uuid, datetime
 
 @app.route('/')
 def landing_page():
@@ -19,9 +17,9 @@ def landing_page():
 def home_page():
     return render_template('home.html')
 
-
-# View Family Page - Show the current family code and options to join/create/leave family
-# View Family Page - Show the current family code and options to join/create/leave family
+####################
+#   Family routes  #
+####################
 @app.route('/family', methods=['GET', 'POST'])
 @login_required
 def family_page():
@@ -51,7 +49,6 @@ def family_page():
     # Render the template, passing the join_form to the HTML
     return render_template('app_dir/family.html', join_form=join_form, family_members=family_members)
 
-# Route to create a new family
 @app.route('/create_family', methods=['POST'])
 @login_required
 def create_family():
@@ -68,7 +65,6 @@ def create_family():
     flash(f'You have created a new family with the code {new_family.FamilyId}', 'success')
     return redirect(url_for('family_page'))
 
-# Route to leave the family
 @app.route('/leave_family', methods=['POST'])
 @login_required
 def leave_family():
@@ -91,6 +87,77 @@ def leave_family():
         flash('Error leaving family. You are not part of any family.', 'danger')
 
     return redirect(url_for('family_page'))
+
+########################
+#   Purchases routes   #
+########################
+
+@app.route('/purchases', methods=['GET', 'POST'])
+@login_required
+def purchases_page():
+
+    form = AddPurchaseForm()
+
+    products = Product.query.all()
+    form.product.choices = [(p.ProductId, p.Description) for p in products]
+
+    # Handle form submission to add a new purchase
+    if form.validate_on_submit():
+        if not current_user.Family:
+            flash('Error adding purchase. You are not part of a family.', 'danger')
+            return redirect(url_for('purchases_page'))
+        else:
+            new_purchase = Purchases(
+                PurchaseID=form.purchase_id.data,
+                Date=form.date.data,
+                Quantity=form.quantity.data,
+                Price=form.price.data * form.quantity.data,
+                Product=form.product.data,
+                Family=current_user.Family
+            )
+            db.session.add(new_purchase)
+            db.session.commit()
+            flash('Purchase added successfully!', 'success')
+            return redirect(url_for('purchases_page'))
+
+    # Query past purchases for the family
+    family_id = current_user.Family
+    if family_id is None:
+        past_purchases=[]
+    else:
+        past_purchases = db.session.query(
+            Purchases.PurchaseID,
+            Purchases.Date,
+            func.sum(Purchases.Price).label('TotalPrice')
+        ).filter_by(Family=family_id).order_by(Purchases.Date.desc()).group_by(Purchases.PurchaseID, Purchases.Date).all()
+
+    return render_template('app_dir/purchases.html', form=form, past_purchases=past_purchases)
+
+@app.route('/purchase/<purchase_id>', methods=['GET'])
+@login_required
+def purchase_details(purchase_id):
+    purchase_items = Purchases.query.filter_by(PurchaseID=purchase_id).all()
+    return jsonify([
+        {
+            "product_description": Product.query.get(item.Product).Description,
+            "quantity": item.Quantity,
+            "price": float(item.Price)
+        } for item in purchase_items
+    ])
+
+@app.route('/delete_purchase/', methods=['POST'])
+@login_required
+def delete_purchase():
+    if request.method == 'POST' and 'delete_purchaseid' in request.form:
+        purchase_id = request.form.get('delete_purchaseid')
+        purchases = Purchases.query.filter_by(PurchaseID=purchase_id).all()
+        for item in purchases:
+            db.session.delete(item)
+            db.session.commit()
+        else:
+            flash('An error occurred. Couldn\'t delete.', 'danger')
+
+    return redirect(url_for('purchases_page'))
 
 ####################
 #   Other routes   #
@@ -153,7 +220,7 @@ def health_and_diet_page():
     # Save selected diet
     if dform.validate_on_submit():
         if False:
-            ss=1;
+            ss=1
         else:
             new_diet = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=dform.diet_type.data)
             db.session.add(new_diet)

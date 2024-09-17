@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Scontrini{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Purchases</h1>
+            <p class="lead text-muted animate__animated animate__fadeInDown">Add your purchases - monitor your expenses and habits</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Purchases</li>
+                    </ol>
+                </nav>
+
+                <!-- Add Purchase Button -->
+                <button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#addPurchaseModal">Add New Purchase</button>
+
+                <!-- Past Purchases List -->
+
+                {% for purchase in past_purchases %}
+                    <div class="list-group animate__animated animate__fadeInUp">
+                        <a href="#" class="list-group-item list-group-item-action"
+                           data-bs-toggle="modal" data-bs-target="#purchaseModal"
+                           data-id="{{ purchase.PurchaseID }}" data-date="{{ purchase.Date }}" >
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Purchase Code: {{ purchase.PurchaseID }}</h5>
+                                <small>{{ purchase.Date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1 align-self-end">Total Price: {{ purchase.TotalPrice }} €</p>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="list-group list-group-item pt-4">
+                        <p class="text-center">No purchases found.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for Adding Purchase / Redirect to Family if not in one already-->
+    <div class="modal fade" id="addPurchaseModal" tabindex="-1" aria-labelledby="addPurchaseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {% if current_user.Family %}
+                    <form method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addPurchaseLabel">Add New Purchase</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ form.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ form.purchase_id.label(class="form-label") }}
+                                {{ form.purchase_id(class="form-control", placeholder="Enter Receipt ID") }}
+                            </div>
+                            <div>
+                                {{ form.date.label(class="form-label") }}
+                                {{ form.date(class="form-control", placeholder="Enter Purchase Date") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.product.label(class="form-label") }}
+                                {{ form.product(class="form-select, select2") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.quantity.label(class="form-label") }}
+                                {{ form.quantity(class="form-control", placeholder="Enter Quantity") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.price.label(class="form-label") }}
+                                {{ form.price(class="form-control", placeholder="Enter Price") }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            {{ form.submit(class="btn btn btn-primary") }}
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="familyAlertModalLabel">Join a Family</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">You are not part of a family yet.</p>
+                        <p class="text-center"> To add purchases, please join or create a family.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ url_for('family_page') }}" class="btn btn-primary w-100">Go to Family Page</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Purchase Details -->
+    <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-2">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="purchaseLabel">Purchase Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Dynamic Purchase Modal Content Here -->
+                </div>
+                <form method="POST" action="{{ url_for('delete_purchase') }}" class="text-center delete-form">
+                    <input type="hidden" name="delete_purchaseid">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% include 'modal.html' %}
+
+    <script>
+        $(document).ready(
+            function() {
+                $('.select2').select2({
+                    dropdownParent: $('#addPurchaseModal')
+                });
+
+                $('#purchaseModal').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget);
+                    var purchaseId = button.data('id');
+                    var modal = $(this);
+                    $.getJSON(`/purchase/${purchaseId}`, function(data) {
+                        var content = '<ul>';
+                        $.each(data, function(index, item) {
+                            content += `<li>${item.quantity} x ${item.product_description} - ${item.price.toFixed(2)} €</li>`;
+                        });
+                        content += '</ul>';
+                        modal.find('.modal-body').html(content);
+                    });
+                    $('.delete-form input[name="delete_purchaseid"]').val(purchaseId);
+                });
+            },
+        );
+    </script>
+{% endblock %}

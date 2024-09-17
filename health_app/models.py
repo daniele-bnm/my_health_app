@@ -1,6 +1,3 @@
-from contextlib import nullcontext
-from email.policy import default
-
 from health_app import db, bcrypt, login_manager
 from flask_login import UserMixin
 
