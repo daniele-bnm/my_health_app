@@ -26,6 +26,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label='Accedi')
 
 class ProfileForm(FlaskForm):
+
+    def validate_email(self, email_to_check):
+        if Consumer.query.filter_by(Email=email_to_check.data).first() and email_to_check.data != self.email.data:
+            raise ValidationError('This email has been registered already!')
+
     email = StringField(label='Indirizzo Email', validators=[DataRequired(message='Enter a valid email'), Email()])
     name = StringField(label='Nome', validators=[DataRequired(message='Enter your name')])
     surname = StringField(label='Cognome', validators=[DataRequired(message='Enter your surname')])
@@ -35,9 +40,7 @@ class ProfileForm(FlaskForm):
     address = StringField(label='Indirizzo')
     submit = SubmitField(label='Salva')
 
-    def validate_email(self, email_to_check):
-        if Consumer.query.filter_by(Email=email_to_check.data).first() and email_to_check.data != self.email.data:
-            raise ValidationError('This email has been registered already!')
+
 
 class DietForm(FlaskForm):
     diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired()])
@@ -59,15 +62,16 @@ class JoinFamilyForm(FlaskForm):
 
 
 class BodyCompositionForm(FlaskForm):
-    weight = DecimalField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0, message="Weight must be a positive value")])
-    height = DecimalField('Height (cm)', validators=[DataRequired(), NumberRange(min=0, message="Height must be a positive value")])
+    weight = DecimalField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0, max=500, message="Weight must be a positive value")])
+    height = DecimalField('Height (cm)', validators=[DataRequired(), NumberRange(min=0, max=300, message="Height must be a positive value")])
     submit = SubmitField('Update Body Composition')
 
 
-class AddPurchaseForm(FlaskForm):
-    purchase_id = StringField('Receipt ID', validators=[DataRequired()])
-    date = DateField('Date', validators=[DataRequired()])
-    product = SelectField('Product', choices=[], validators=[DataRequired()])
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
-    price = DecimalField('Price of the single item (n.xx €)', places=2, validators=[DataRequired()])
-    submit = SubmitField('Add Purchase')
+class NewPurchaseForm(FlaskForm):
+    purchase_id = StringField('Receipt ID', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter Receipt ID"})
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d', render_kw={"class": "form-control", "placeholder": "Enter Purchase Date"})
+    product = SelectField('Product', choices=[], validators=[DataRequired()], render_kw={"class": "form-select"})
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)], render_kw={"class": "form-control", "placeholder": "Enter Quantity"})
+    price = DecimalField('Price', places=2, validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter Price"})
+    submit_product = SubmitField('Add Product', render_kw={"class": "btn btn-success"})
+    submit_all = SubmitField('Submit All Purchases', render_kw={"class": "btn btn-primary"})

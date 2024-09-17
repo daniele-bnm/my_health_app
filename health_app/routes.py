@@ -3,10 +3,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func
 from health_app import  app, db
 from health_app.forms import LoginForm, RegistrationForm, ProfileForm, PhysicalActivityForm, HealthConditionsForm, \
-    DietForm, JoinFamilyForm, BodyCompositionForm, AddPurchaseForm
+    DietForm, JoinFamilyForm, BodyCompositionForm, NewPurchaseForm
 from health_app.models import Consumer, Family, PhysicalActivity, Activities, HealthConditions, Diet, \
     DietConsumerChoices, ConsumerHealthConditions, BodyComposition, Product, Purchases
-import uuid, datetime
+import uuid, datetime, json
 
 @app.route('/')
 def landing_page():
@@ -95,31 +95,6 @@ def leave_family():
 @app.route('/purchases', methods=['GET', 'POST'])
 @login_required
 def purchases_page():
-
-    form = AddPurchaseForm()
-
-    products = Product.query.all()
-    form.product.choices = [(p.ProductId, p.Description) for p in products]
-
-    # Handle form submission to add a new purchase
-    if form.validate_on_submit():
-        if not current_user.Family:
-            flash('Error adding purchase. You are not part of a family.', 'danger')
-            return redirect(url_for('purchases_page'))
-        else:
-            new_purchase = Purchases(
-                PurchaseID=form.purchase_id.data,
-                Date=form.date.data,
-                Quantity=form.quantity.data,
-                Price=form.price.data * form.quantity.data,
-                Product=form.product.data,
-                Family=current_user.Family
-            )
-            db.session.add(new_purchase)
-            db.session.commit()
-            flash('Purchase added successfully!', 'success')
-            return redirect(url_for('purchases_page'))
-
     # Query past purchases for the family
     family_id = current_user.Family
     if family_id is None:
@@ -131,7 +106,55 @@ def purchases_page():
             func.sum(Purchases.Price).label('TotalPrice')
         ).filter_by(Family=family_id).order_by(Purchases.Date.desc()).group_by(Purchases.PurchaseID, Purchases.Date).all()
 
-    return render_template('app_dir/purchases.html', form=form, past_purchases=past_purchases)
+    return render_template('app_dir/purchases.html', past_purchases=past_purchases)
+
+@app.route('/new_purchase', methods=['GET'])
+@login_required
+def new_purchase():
+    if current_user.Family is None:
+        flash('You are not part of a family yet. Please join or create a family first.', 'warning')
+        return redirect(url_for('family_page'))
+
+    form = NewPurchaseForm()
+    products = Product.query.all()
+    form.product.choices = [(p.ProductId, p.Description) for p in products]
+
+    return render_template('app_dir/new_purchase.html', form=form)
+
+@app.route('/submit_purchase', methods=['POST'])
+@login_required
+def submit_purchase():
+    if current_user.Family is None:
+        flash('You are not part of a family yet. Please join or create a family first.', 'warning')
+        return redirect(url_for('family_page'))
+
+    purchase_id = request.form.get('purchase_id')
+    date = request.form.get('date')
+    products_data = request.form.get('products')
+
+    if not products_data:
+        return jsonify({'error': 'No products added'}), 400
+
+    try:
+        products = json.loads(products_data)  # Decode JSON string into list of products
+    except json.JSONDecodeError:
+        return jsonify({'error': 'Invalid product data'}), 400
+
+    # Insert each product into the Purchases table
+    for product in products:
+        new_purchase = Purchases(
+            PurchaseID=purchase_id,
+            Date=date,
+            Product=product['product_id'],
+            Quantity=product['quantity'],
+            Price=product['price'],
+            Family=current_user.Family
+        )
+        db.session.add(new_purchase)
+
+    db.session.commit()
+    flash('Purchase added successfully!', 'success')
+    return redirect(url_for('purchases_page'))
 
 @app.route('/purchase/<purchase_id>', methods=['GET'])
 @login_required
@@ -169,7 +192,12 @@ def profile_page():
     if form.validate_on_submit():
         current_user.Name = form.name.data
         current_user.Surname = form.surname.data
-        current_user.Email = form.email.data
+        if not Consumer.query.filter_by(Email=form.email.data).first() or form.email.data == current_user.Email:
+            current_user.Email = form.email.data
+        else:
+            flash('Another account with this email already exists', 'danger')
+            return redirect(url_for('profile_page'))
+        current_user.PlaceOfBirth = form.place_of_birth.data
         current_user.DateOfBirth = form.date_of_birth.data
         current_user.PlaceOfBirth = form.place_of_birth.data
         current_user.Gender = form.gender.data
