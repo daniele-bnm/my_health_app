@@ -14,42 +14,42 @@
                 {{ form.hidden_tag() }}
                 <div class="mb-3">
                   {{ form.email.label(class="form-label") }}
-                  {{ form.email(class="form-control form-control-lg", required=True, type="email") }}
+                  {{ form.email(class="form-control form-control-lg", type="email") }}
                   <div class="invalid-feedback">Per favore, inserisci un indirizzo email valido.</div>
                 </div>
                 <div class="row mb-3">
                   <div class="col">
                     {{ form.name.label(class="form-label") }}
-                    {{ form.name(class="form-control form-control-lg", placeholder="Nome", required=True) }}
+                    {{ form.name(class="form-control form-control-lg", placeholder="Nome") }}
                     <div class="invalid-feedback">Per favore, inserisci il tuo nome.</div>
                   </div>
                   <div class="col">
                     {{ form.surname.label(class="form-label") }}
-                    {{ form.surname(class="form-control form-control-lg", placeholder="Cognome", required=True) }}
+                    {{ form.surname(class="form-control form-control-lg", placeholder="Cognome") }}
                     <div class="invalid-feedback">Per favore, inserisci il tuo cognome.</div>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <div class="col">
                     {{ form.date_of_birth.label(class="form-label") }}
-                    {{ form.date_of_birth(class="form-control form-control-lg", placeholder="dd/mm/yyyy", required=True, type="date") }}
+                    {{ form.date_of_birth(class="form-control form-control-lg", placeholder="dd/mm/yyyy", type="date") }}
                     <div class="invalid-feedback">Per favore, inserisci la tua data di nascita.</div>
                   </div>
                   <div class="col">
                     {{ form.gender.label(class="form-label") }}
-                    {{ form.gender(class="form-select form-control-lg", required=True) }}
+                    {{ form.gender(class="form-select form-control-lg") }}
                     <div class="invalid-feedback">Per favore, seleziona il tuo genere.</div>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <div class="col">
                     {{ form.place_of_birth.label(class="form-label") }}
-                    {{ form.place_of_birth(class="form-control form-control-lg", placeholder="Luogo di nascita", required=True) }}
+                    {{ form.place_of_birth(class="form-control form-control-lg", placeholder="Luogo di nascita") }}
                     <div class="invalid-feedback">Per favore, inserisci il tuo luogo di nascita.</div>
                   </div>
                   <div class="col">
                     {{ form.address.label(class="form-label") }}
-                    {{ form.address(class="form-control form-control-lg", placeholder="Indirizzo", required=True) }}
+                    {{ form.address(class="form-control form-control-lg", placeholder="Indirizzo") }}
                     <div class="invalid-feedback">Per favore, inserisci il tuo indirizzo.</div>
                   </div>
                 </div>
