@@ -53,7 +53,10 @@ def family_page():
 @login_required
 def create_family():
     # Generate a unique family ID using UUID
-    family_id = str(uuid.uuid4())[:8]  # Shorten UUID for simplicity
+    family_id = str(uuid.uuid4())[:8]
+    while Family.query.filter_by(FamilyId=family_id).first():
+        family_id = str(uuid.uuid4())[:8]  # Generate a new ID if it already exists
+
     new_family = Family(FamilyId=family_id, Members=1)
     db.session.add(new_family)
     db.session.commit()
@@ -72,14 +75,20 @@ def leave_family():
     current_family = Family.query.filter_by(FamilyId=current_user.Family).first()
 
     if current_family:
-        # Reduce the family member count
-        current_family.Members -= 1
-        # Remove the user from the family
-        current_user.Family = None
+        try:
+            # Reduce the family member count
+            current_family.Members -= 1
+            # Remove the user from the family
+            current_user.Family = None
 
-        # If no members are left, delete the family
-        if current_family.Members == 0:
-            db.session.delete(current_family)
+            # If no members are left, delete the family
+            if current_family.Members == 0:
+                db.session.delete(current_family)
+
+        except Exception as e:
+            flash('An error occurred while leaving the family.', 'danger')
+            db.session.rollback()
+            return redirect(url_for('family_page'))
 
         db.session.commit()
         flash('You have left the family.', 'warning')
@@ -96,19 +105,23 @@ def leave_family():
 @login_required
 def purchases_page():
     # Query past purchases for the family
-    family_id = current_user.Family
-    if family_id is None:
-        past_purchases=[]
-    else:
-        past_purchases = db.session.query(
-            Purchases.PurchaseID,
-            Purchases.Date,
-            func.sum(Purchases.Price).label('TotalPrice')
-        ).filter_by(Family=family_id).order_by(Purchases.Date.desc()).group_by(Purchases.PurchaseID, Purchases.Date).all()
+    try:
+        family_id = current_user.Family
+        if family_id is None:
+            past_purchases=[]
+        else:
+            past_purchases = db.session.query(
+                Purchases.PurchaseID,
+                Purchases.Date,
+                func.sum(Purchases.Price).label('TotalPrice')
+            ).filter_by(Family=family_id).order_by(Purchases.Date.desc()).group_by(Purchases.PurchaseID, Purchases.Date).all()
+    except Exception as e:
+        past_purchases = []
+        flash('An error occurred while fetching past purchases.', 'danger')
 
     return render_template('app_dir/purchases.html', past_purchases=past_purchases)
 
-@app.route('/new_purchase', methods=['GET'])
+@app.route('/purchases/new_purchase', methods=['GET'])
 @login_required
 def new_purchase():
     if current_user.Family is None:
@@ -121,7 +134,7 @@ def new_purchase():
 
     return render_template('app_dir/new_purchase.html', form=form)
 
-@app.route('/submit_purchase', methods=['POST'])
+@app.route('/purchases/new_purchase/submit_purchase', methods=['POST'])
 @login_required
 def submit_purchase():
     if current_user.Family is None:
@@ -141,21 +154,29 @@ def submit_purchase():
         return jsonify({'error': 'Invalid product data'}), 400
 
     # Insert each product into the Purchases table
-    for product in products:
-        new_purchase = Purchases(
-            PurchaseID=purchase_id,
-            Date=date,
-            Product=product['product_id'],
-            Quantity=product['quantity'],
-            Price=product['price'],
-            Family=current_user.Family
-        )
-        db.session.add(new_purchase)
+    try:
+        for product in products:
+            purchase_to_add = Purchases(
+                PurchaseID=purchase_id,
+                Date=date,
+                Product=product['product_id'],
+                Quantity=product['quantity'],
+                Price=product['price'],
+                Family=current_user.Family
+            )
+            db.session.add(purchase_to_add)
 
-    db.session.commit()
-    flash('Purchase added successfully!', 'success')
-    return redirect(url_for('purchases_page'))
+        db.session.commit()
+        flash('Purchase added successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while adding the purchase. Please try again.', 'danger')
 
+    finally:
+        return redirect(url_for('new_purchase'))
+
+
+#returns details of the selected purchase
 @app.route('/purchase/<purchase_id>', methods=['GET'])
 @login_required
 def purchase_details(purchase_id):
@@ -177,8 +198,9 @@ def delete_purchase():
         for item in purchases:
             db.session.delete(item)
             db.session.commit()
-        else:
-            flash('An error occurred. Couldn\'t delete.', 'danger')
+    else:
+
+        flash('An error has occurred. Contact support if the problem persists.', 'danger')
 
     return redirect(url_for('purchases_page'))
 
@@ -190,21 +212,27 @@ def delete_purchase():
 def profile_page():
     form = ProfileForm(obj=current_user)
     if form.validate_on_submit():
-        current_user.Name = form.name.data
-        current_user.Surname = form.surname.data
-        if not Consumer.query.filter_by(Email=form.email.data).first() or form.email.data == current_user.Email:
-            current_user.Email = form.email.data
-        else:
-            flash('Another account with this email already exists', 'danger')
+        try:
+            current_user.Name = form.name.data
+            current_user.Surname = form.surname.data
+            if not Consumer.query.filter_by(Email=form.email.data).first() or form.email.data == current_user.Email:
+                current_user.Email = form.email.data
+            else:
+                flash('Another account with this email already exists', 'danger')
+                return redirect(url_for('profile_page'))
+            current_user.PlaceOfBirth = form.place_of_birth.data
+            current_user.DateOfBirth = form.date_of_birth.data
+            current_user.PlaceOfBirth = form.place_of_birth.data
+            current_user.Gender = form.gender.data
+            current_user.Address = form.address.data
+            db.session.commit()
+            flash('Consumer info updated successfully', 'success')
+        except Exception as e:
+            flash('An error has occurred. Contact support if the problem persists.', 'danger')
+            db.session.rollback()
+        finally:
             return redirect(url_for('profile_page'))
-        current_user.PlaceOfBirth = form.place_of_birth.data
-        current_user.DateOfBirth = form.date_of_birth.data
-        current_user.PlaceOfBirth = form.place_of_birth.data
-        current_user.Gender = form.gender.data
-        current_user.Address = form.address.data
-        db.session.commit()
-        flash('Consumer info updated successfully', 'success')
-        return redirect(url_for('profile_page'))
+
     elif request.method == 'GET':
         form.name.data = current_user.Name
         form.surname.data = current_user.Surname
@@ -306,13 +334,15 @@ def physical_activity_page():
             DurationMinutes=form.duration_minutes.data,
             Date=form.date.data
         )
-
-        db.session.add(new_physical_activity)
-        db.session.commit()
-
-        flash('Activity added successfully!', 'success')
-        return redirect(url_for('physical_activity_page'))
-
+        try:
+            db.session.add(new_physical_activity)
+            db.session.commit()
+            flash('Activity added successfully!', 'success')
+        except:
+            flash('An error occurred. Activity not added.', 'danger')
+            db.session.rollback()
+        finally:
+            return redirect(url_for('physical_activity_page'))
 
     # Check if the form is for deletion
     if request.method == 'POST' and 'delete_activity_id' in request.form:
@@ -362,10 +392,15 @@ def body_composition_page():
             Height=form.height.data,
             Date=datetime.datetime.now()
         )
-        db.session.add(new_entry)
-        db.session.commit()
-        flash('Your body composition has been updated.', 'success')
-        return redirect(url_for('body_composition_page'))
+        try:
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Your body composition has been updated.', 'success')
+        except Exception as e:
+            flash('An error occurred. Please try again.', 'danger')
+            db.session.rollback()
+        finally:
+            return redirect(url_for('body_composition_page'))
 
     return render_template('app_dir/body_composition.html', form=form, past_data=past_data, bmi=bmi)
 
@@ -401,8 +436,15 @@ def register_page():
                         DateOfBirth=form.date_of_birth.data,
                         Gender=form.gender.data)
         # Add the user to the database
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash('An error occurred. Please try again later.', 'danger')
+            return redirect(url_for('register_page'))
+
+        # Log the user in
         login_user(user)
         flash(f'Account created!', 'success')
         return redirect(url_for('home_page'))
@@ -435,3 +477,7 @@ def logout_page():
     logout_user()
     flash("You have been logged out!", category='info')
     return redirect(url_for("landing_page"))
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404

@@ -1,60 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}Add New Purchase{% endblock %}
+{% block title %}New Purchase{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Purchase Info Section -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h4 class="card-title">Receipt Information</h4>
-            <form id="purchaseForm">
-                {{ form.hidden_tag() }}
-                <div class="mb-3">
-                    {{ form.purchase_id.label(class="form-label") }}
-                    {{ form.purchase_id(class="form-control") }}
-                </div>
-                <div class="mb-3">
-                    {{ form.date.label(class="form-label") }}
-                    {{ form.date(class="form-control") }}
-                </div>
-            </form>
-        </div>
+<div class="container mt-5 ">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Add New Purchase</h1>
+        <p class="lead text-muted animate__animated animate__fadeInDown">Insert the products of your receipt</p>
     </div>
+    <div class="row justify-content-center">
+    <div class="col-lg-8">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('purchases_page') }}">Purchases</a></li>
+            <li class="breadcrumb-item active" aria-current="page">New Purchase</li>
+        </ol>
+    </nav>
 
-    <!-- Add Product Section -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h4 class="card-title">Add Products</h4>
-            <div class="row">
-                <div class="col-md-4">
-                    {{ form.product.label(class="form-label") }}
-                    {{ form.product(class="form-select select2") }}
+    <form id="purchaseForm">
+        <!-- Purchase Info Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Receipt Information</h4>
+
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.purchase_id.label(class="form-label") }}
+                        {{ form.purchase_id(class="form-control", id="form-purchase_id") }}
+                        <div class="invalid-feedback">Please enter a valid purchase ID.</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.date.label(class="form-label") }}
+                        {{ form.date(class="form-control", id="form-date") }}
+                        <div class="invalid-feedback">Please enter a valid date.</div>
+                    </div>
+
+            </div>
+        </div>
+
+        <!-- Add Product Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Add Products</h4>
+                <div class="row">
+                    <div class="col mb-3">
+                        {{ form.product.label(class="form-label") }}
+                        {{ form.product(class="form-select select2", id="form-product") }}
+                        <div class="invalid-feedback">Please select a product.</div>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    {{ form.quantity.label(class="form-label") }}
-                    {{ form.quantity(class="form-control") }}
-                </div>
-                <div class="col-md-2">
-                    {{ form.price.label(class="form-label") }}
-                    {{ form.price(class="form-control") }}
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-success mt-4" id="submit_product">Add Product</button>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.quantity.label(class="form-label") }}
+                        {{ form.quantity(class="form-control", id="form-quantity") }}
+                        <div class="invalid-feedback">Please enter a valid quantity.</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.price.label(class="form-label") }}
+                        {{ form.price(class="form-control", id="form-price") }}
+                        <div class="invalid-feedback">Please enter a valid price.</div>
+                    </div>
+                    <div class="col-md-4 mb-3 align-self-end d-flex justify-content-end">
+                        <button type="button" class="btn btn-success mt-4" id="submit_product">Add Product</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Added Products Section -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h4 class="card-title">Products List</h4>
-            <ul class="list-group" id="productsList">
-                <!-- Dynamically added products will appear here -->
-            </ul>
-            <button type="button" class="btn btn-primary mt-4" id="submit_all">Submit All Purchases</button>
+        <!-- Added Products Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Products List</h4>
+                <ul class="list-group" id="productsList">
+                    <!-- Dynamically added products will appear here -->
+                </ul>
+                <button type="button" class="btn btn-primary mt-4" id="submit_all">Submit All Purchases</button>
+            </div>
         </div>
+    </form>
+
+    </div>
     </div>
 </div>
 
@@ -75,27 +103,30 @@
                 // Validate the fields
                 if (!productId || quantity <= 0 || price <= 0) {
                     alert("Please fill in all fields correctly.");
-                    return;
+                // Check if the product is already in the list
+                } else if(products.some(product => product.product_id === productId)) {
+                    alert("Product already added.");
+                } else {
+                    products.push({
+                        product_id: productId,
+                        product_name: productText,
+                        quantity: quantity,
+                        price: price
+                    });
+
+                    // Append the product to the list
+                    $('#productsList').append(`
+                        <li class="list-group-item">
+                            ${productText}: ${quantity} units @ ${price} €
+                        </li>
+                    `);
+
+                    // Clear the input fields
+                    $('#form-quantity').val('');
+                    $('#form-price').val('');
                 }
 
-                // Add product to the array
-                products.push({
-                    product_id: productId,
-                    product_name: productText,
-                    quantity: quantity,
-                    price: price
-                });
 
-                // Append the product to the list
-                $('#productsList').append(`
-                    <li class="list-group-item">
-                        ${productText}: ${quantity} units @ ${price} €
-                    </li>
-                `);
-
-                // Clear the input fields
-                $('#form-quantity').val('');
-                $('#form-price').val('');
             }
         );
 
