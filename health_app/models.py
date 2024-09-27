@@ -92,8 +92,7 @@ class NutrientHealthConditions(db.Model):
     Nutrient = db.Column(db.String(100), db.ForeignKey('NutritionalInformation.NutrientId', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
     MinQuantity = db.Column(db.Integer, default=None)
     MaxQuantity = db.Column(db.Integer, default=None)
-    #db.Boolean for PercentKCal and UoMperKg columns, as they are defined as tinyint(1) in the MySQL query, which is
-    # equivalent to a boolean value in SQLAlchemy.
+    # db.Boolean for PercentKCal and UoMperKg columns as they are defined as tinyint(1) MySQL
     PercentKCal = db.Column(db.Boolean, default=None)
     UoMperKg = db.Column(db.Boolean, default=None)
 

@@ -479,5 +479,5 @@ def logout_page():
     return redirect(url_for("landing_page"))
 
 @app.errorhandler(404)
-def not_found_error(error):
+def page_not_found(error):
     return render_template('404.html'), 404

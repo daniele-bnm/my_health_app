@@ -25,16 +25,15 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h4 class="card-title">Receipt Information</h4>
-
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
                         {{ form.purchase_id.label(class="form-label") }}
-                        {{ form.purchase_id(class="form-control", id="form-purchase_id") }}
+                        {{ form.purchase_id(class="form-control", placeholder="Enter Receipt ID", id="form-purchase_id") }}
                         <div class="invalid-feedback">Please enter a valid purchase ID.</div>
                     </div>
                     <div class="mb-3">
                         {{ form.date.label(class="form-label") }}
-                        {{ form.date(class="form-control", id="form-date") }}
+                        {{ form.date(class="form-control", placeholder="Enter Purchase Date", id="form-date") }}
                         <div class="invalid-feedback">Please enter a valid date.</div>
                     </div>
 
@@ -48,19 +47,19 @@
                 <div class="row">
                     <div class="col mb-3">
                         {{ form.product.label(class="form-label") }}
-                        {{ form.product(class="form-select select2", id="form-product") }}
+                        {{ form.product(class="form-select select2", placeholder="Select Product", id="form-product") }}
                         <div class="invalid-feedback">Please select a product.</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         {{ form.quantity.label(class="form-label") }}
-                        {{ form.quantity(class="form-control", id="form-quantity") }}
+                        {{ form.quantity(class="form-control", type="number", placeholder="Enter Quantity", id="form-quantity") }}
                         <div class="invalid-feedback">Please enter a valid quantity.</div>
                     </div>
                     <div class="col-md-4 mb-3">
                         {{ form.price.label(class="form-label") }}
-                        {{ form.price(class="form-control", id="form-price") }}
+                        {{ form.price(class="form-control", placeholder="Enter Price", id="form-price") }}
                         <div class="invalid-feedback">Please enter a valid price.</div>
                     </div>
                     <div class="col-md-4 mb-3 align-self-end d-flex justify-content-end">
@@ -95,13 +94,13 @@
         // Handle adding a product
         $('#submit_product').click(
             function() {
-                let productId = $('#form-product').val();  // Correct ID for the product field
-                let productText = $('#form-product option:selected').text();  // Get the selected product's text
-                let quantity = $('#form-quantity').val();  // Correct ID for the quantity field
-                let price = $('#form-price').val();  // Correct ID for the price field
+                let productId = $('#form-product').val();
+                let productText = $('#form-product option:selected').text();  //selected product name
+                let quantity = $('#form-quantity').val();
+                let price = $('#form-price').val();
 
                 // Validate the fields
-                if (!productId || quantity <= 0 || price <= 0) {
+                if (!productId || quantity <= 0 || price < 0) {
                     alert("Please fill in all fields correctly.");
                 // Check if the product is already in the list
                 } else if(products.some(product => product.product_id === productId)) {
@@ -114,10 +113,9 @@
                         price: price
                     });
 
-                    // Append the product to the list
                     $('#productsList').append(`
                         <li class="list-group-item">
-                            ${productText}: ${quantity} units @ ${price} €
+                            ${productText}: ${quantity} units x ${price}€
                         </li>
                     `);
 

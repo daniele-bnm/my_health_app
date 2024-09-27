@@ -68,10 +68,8 @@ class BodyCompositionForm(FlaskForm):
 
 
 class NewPurchaseForm(FlaskForm):
-    purchase_id = StringField('Receipt ID', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter Receipt ID"})
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d', render_kw={"class": "form-control", "placeholder": "Enter Purchase Date"})
-    product = SelectField('Product', choices=[], validators=[DataRequired()], render_kw={"class": "form-select"})
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)], render_kw={"class": "form-control", "placeholder": "Enter Quantity"})
-    price = DecimalField('Price', places=2, validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter Price"})
-    submit_product = SubmitField('Add Product', render_kw={"class": "btn btn-success"})
-    submit_all = SubmitField('Submit All Purchases', render_kw={"class": "btn btn-primary"})
+    purchase_id = StringField('Receipt ID', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    product = SelectField('Product', choices=[], validators=[DataRequired()])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    price = DecimalField('Price', places=2, validators=[DataRequired()])
