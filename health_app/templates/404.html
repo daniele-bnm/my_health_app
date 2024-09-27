@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+  <div class="container text-center" style="padding: 100px 20px;">
+    <h1 class="display-1">404</h1>
+    <p class="lead text-muted">Oops! The page you're looking for can't be found.</p>
+
+    <a href="{% if current_user.is_authenticated %} {{ url_for('home_page') }}
+             {% else %} {{ url_for('landing_page') }}
+             {% endif %}"
+       class="btn btn-primary btn-lg mt-5">
+      <b>Go to Home</b>
+    </a>
+  </div>
+{% endblock %}
