@@ -27,8 +27,8 @@
                 <h4 class="card-title">Receipt Information</h4>
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
-                        {{ form.purchase_id.label(class="form-label") }}
-                        {{ form.purchase_id(class="form-control", placeholder="Enter Receipt ID", id="form-purchase_id") }}
+                        {{ form.receipt_id.label(class="form-label") }}
+                        {{ form.receipt_id(class="form-control", placeholder="Enter Receipt ID", id="form-receipt_id") }}
                         <div class="invalid-feedback">Please enter a valid purchase ID.</div>
                     </div>
                     <div class="mb-3">
@@ -59,7 +59,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         {{ form.price.label(class="form-label") }}
-                        {{ form.price(class="form-control", placeholder="Enter Price", id="form-price") }}
+                        {{ form.price(class="form-control", placeholder="Enter Price of the single item", id="form-price") }}
                         <div class="invalid-feedback">Please enter a valid price.</div>
                     </div>
                     <div class="col-md-4 mb-3 align-self-end d-flex justify-content-end">
@@ -85,77 +85,109 @@
     </div>
 </div>
 
+{% include 'modal.html' %}
+
 <script>
     $(document).ready(function() {
         $('.select2').select2();
-        
+
         let products = [];
 
         // Handle adding a product
-        $('#submit_product').click(
+        $('#submit_product').on('click',
             function() {
-                let productId = $('#form-product').val();
-                let productText = $('#form-product option:selected').text();  //selected product name
-                let quantity = $('#form-quantity').val();
-                let price = $('#form-price').val();
-
-                // Validate the fields
-                if (!productId || quantity <= 0 || price < 0) {
-                    alert("Please fill in all fields correctly.");
-                // Check if the product is already in the list
-                } else if(products.some(product => product.product_id === productId)) {
-                    alert("Product already added.");
-                } else {
-                    products.push({
-                        product_id: productId,
-                        product_name: productText,
-                        quantity: quantity,
-                        price: price
-                    });
-
-                    $('#productsList').append(`
-                        <li class="list-group-item">
-                            ${productText}: ${quantity} units x ${price}€
-                        </li>
-                    `);
-
-                    // Clear the input fields
-                    $('#form-quantity').val('');
-                    $('#form-price').val('');
-                }
-
-
-            }
-        );
-
-        // Handle final form submission
-        $('#submit_all').click(function() {
-            // Get purchase ID and date
-            let purchaseId = $('#form-purchase_id').val();
-            let date = $('#form-date').val();
-
-            if (!purchaseId || !date || products.length === 0) {
-                alert("Please fill in all fields and add at least one product.");
+            let form = $('#purchaseForm')[0];
+            if (form.checkValidity() === false) {
+                form.classList.add('was-validated');
                 return;
             }
 
-            // Send data to server via POST request
-            $.ajax({
-                url: "{{ url_for('submit_purchase') }}",
-                method: "POST",
-                data: {
-                    purchase_id: purchaseId,
-                    date: date,
-                    products: JSON.stringify(products)
-                },
-                success: function(response) {
-                    window.location.href = "{{ url_for('purchases_page') }}";
-                },
-                error: function(error) {
-                    alert('Error submitting purchase. Please try again.');
+            let productId = $('#form-product').val();
+            let productText = $('#form-product option:selected').text();  // selected product name
+            let quantity = $('#form-quantity').val().trim();
+            let price = ( $('#form-price').val().trim() * 1.0 ).toFixed(2);
+
+            // Reset validation feedback
+            form.classList.remove('was-validated');
+
+            // Validate and add product to the list
+            if(products.some(product => product.product_id === productId)) {
+                alert('Product already added');
+            } else {
+                products.push({
+                    product_id: productId,
+                    product_name: productText,
+                    quantity: quantity,
+                    price: price * quantity
+                });
+
+                $('#productsList').append(`
+                    <li class="list-group-item" id="${productId}">
+                        ${productText}: ${quantity} units x ${price}€
+                        <button type="button" class="btn btn-sm btn-outline-danger float-end" id="delete-btn-${productId}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </li>
+                `);
+
+                $(`#delete-btn-${productId}`).on('click', function() {
+                    deleteProductFromList(productId);
+                });
+
+                // Clear the input fields
+                $('#form-quantity').val('');
+                $('#form-price').val('');
+            }
+        });
+
+        function deleteProductFromList(productId) {
+            products = products.filter(product => product.product_id !== productId);
+            $(`#${productId}`).remove();
+        }
+
+        // Handle final form submission
+        $('#submit_all').on('click',
+            function() {
+                $('#form-receipt_id').removeClass('is-invalid');
+                $('#form-date').removeClass('is-invalid');
+
+                let receiptId = $('#form-receipt_id').val().trim();
+                let date = $('#form-date').val().trim();
+                let isValid = true;
+
+                if (!receiptId) {
+                    $('#form-receipt_id').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                if (!date) {
+                    $('#form-date').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                if (products.length === 0) {
+                    alert('Please add at least one product');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    $.ajax({
+                        url: "{{ url_for('submit_purchase') }}",
+                        method: "POST",
+                        data: {
+                            receipt_id: receiptId,
+                            date: date,
+                            products: JSON.stringify(products)
+                        },
+                        success: function(response) {
+                            window.location.href = "{{ url_for('purchases_page') }}";
+                        },
+                        error: function(error) {
+                            alert('Error submitting purchase: ' + error.responseText);
+                        }
+                    });
                 }
             });
-        });
     });
 </script>
 {% endblock %}
