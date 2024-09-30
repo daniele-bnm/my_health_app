@@ -31,7 +31,12 @@
                            data-bs-toggle="modal" data-bs-target="#purchaseModal"
                            data-id="{{ purchase.PurchaseID }}" data-date="{{ purchase.Date }}" >
                             <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">Purchase Code: {{ purchase.PurchaseID }}</h5>
+                                {% if purchase.ReceiptId %}
+                                    <h5 class="mb-1">Receipt ID: {{ purchase.ReceiptId }}</h5>
+                                {% else %}
+                                    <h6 class="mb-1">Receipt ID missing - Purchase ID: {{ purchase.PurchaseID }}</h6>
+                                {% endif %}
+
                                 <small>{{ purchase.Date.strftime('%Y-%m-%d') }}</small>
                             </div>
                             <p class="mb-1 align-self-end">Total Price: {{ purchase.TotalPrice }} €</p>
