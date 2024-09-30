@@ -154,16 +154,17 @@ class ProductNutritionInfo(db.Model):
 
 class Purchases(db.Model):
     __tablename__ = 'Purchases'
-    PurchaseID = db.Column(db.String(20), primary_key=True, nullable=False)
+    PurchaseID = db.Column(db.String(36), primary_key=True, nullable=False)
     Date = db.Column(db.DateTime, default=None)
     Quantity = db.Column(db.Integer, default=None)
     Price = db.Column(db.Numeric(10, 2), default=None)
     Product = db.Column(db.String(20), db.ForeignKey('Product.ProductId'), primary_key=True, nullable=False)
     Family = db.Column(db.String(10), db.ForeignKey('Family.FamilyId'), default=None)
+    ReceiptId = db.Column(db.String(20), default=None)
 
 class Waste(db.Model):
     __tablename__ = 'Waste'
-    Purchases = db.Column(db.String(20), db.ForeignKey('Purchases.PurchaseID'), primary_key=True, nullable=False)
+    Purchases = db.Column(db.String(36), db.ForeignKey('Purchases.PurchaseID'), primary_key=True, nullable=False)
     Date = db.Column(db.DateTime, default=None)
     Qty = db.Column(db.Float, default=None)
     Product = db.Column(db.String(20), primary_key=True, nullable=False)
