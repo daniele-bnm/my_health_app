@@ -112,12 +112,14 @@ def purchases_page():
         else:
             past_purchases = db.session.query(
                 Purchases.PurchaseID,
+                Purchases.ReceiptId,
                 Purchases.Date,
                 func.sum(Purchases.Price).label('TotalPrice')
-            ).filter_by(Family=family_id).order_by(Purchases.Date.desc()).group_by(Purchases.PurchaseID, Purchases.Date).all()
+            ).filter_by(Family=family_id).group_by(Purchases.PurchaseID, Purchases.ReceiptId, Purchases.Date).order_by(
+                Purchases.Date.desc()).all()
     except Exception as e:
         past_purchases = []
-        flash('An error occurred while fetching past purchases.', 'danger')
+        flash('An error occurred while fetching past purchases.'+e.__str__(), 'danger')
 
     return render_template('app_dir/purchases.html', past_purchases=past_purchases)
 
@@ -141,42 +143,46 @@ def submit_purchase():
         flash('You are not part of a family yet. Please join or create a family first.', 'warning')
         return redirect(url_for('family_page'))
 
-    purchase_id = request.form.get('purchase_id')
+    purchase_id = str(uuid.uuid4())
+    receipt_id = request.form.get('receipt_id')
     date = request.form.get('date')
     products_data = request.form.get('products')
 
     if not products_data:
-        return jsonify({'error': 'No products added'}), 400
+        flash('An error occurred while adding the purchase. Please try again.', 'warning')
+        return redirect(url_for('new_purchase'))
 
     try:
-        products = json.loads(products_data)  # Decode JSON string into list of products
+        products = json.loads(products_data)
     except json.JSONDecodeError:
-        return jsonify({'error': 'Invalid product data'}), 400
+        flash('An error occurred while adding the purchase. Please try again.', 'danger')
+        return redirect(url_for('new_purchase'))
 
-    # Insert each product into the Purchases table
     try:
+        purchases_to_add = []
         for product in products:
             purchase_to_add = Purchases(
                 PurchaseID=purchase_id,
+                ReceiptId=receipt_id,
                 Date=date,
                 Product=product['product_id'],
                 Quantity=product['quantity'],
                 Price=product['price'],
                 Family=current_user.Family
             )
-            db.session.add(purchase_to_add)
+            purchases_to_add.append(purchase_to_add)
 
+        db.session.add_all(purchases_to_add)
         db.session.commit()
         flash('Purchase added successfully!', 'success')
     except Exception as e:
         db.session.rollback()
         flash('An error occurred while adding the purchase. Please try again.', 'danger')
-
+        print(e)
     finally:
         return redirect(url_for('new_purchase'))
 
 
-#returns details of the selected purchase
 @app.route('/purchase/<purchase_id>', methods=['GET'])
 @login_required
 def purchase_details(purchase_id):
@@ -194,10 +200,15 @@ def purchase_details(purchase_id):
 def delete_purchase():
     if request.method == 'POST' and 'delete_purchaseid' in request.form:
         purchase_id = request.form.get('delete_purchaseid')
-        purchases = Purchases.query.filter_by(PurchaseID=purchase_id).all()
-        for item in purchases:
-            db.session.delete(item)
+        try:
+            purchases = Purchases.query.filter_by(PurchaseID=purchase_id).all()
+            for item in purchases:
+                db.session.delete(item)
             db.session.commit()
+            flash('Purchase deleted successfully!', 'success')
+        except Exception as e:
+            flash('An error occurred while deleting the purchase.', 'danger')
+            db.session.rollback()
     else:
 
         flash('An error has occurred. Contact support if the problem persists.', 'danger')
