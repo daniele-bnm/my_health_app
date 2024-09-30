@@ -10,7 +10,7 @@ class RegistrationForm(FlaskForm):
         if Consumer.query.filter_by(Email=email_to_check.data).first():
             raise ValidationError('Email address already exists! Try logging in instead.')
 
-    email = StringField(label='Indirizzo Email:', validators=[DataRequired(message='Email is required'), Email()])
+    email = StringField(label='Indirizzo Email:', validators=[DataRequired(message='Email is required'), Length(max=45), Email()])
     password = PasswordField(label='Password:', validators=[DataRequired(message='Password is required'), Length(min=6)])
     confirm_password = PasswordField(label='Conferma Password:', validators=[DataRequired(message='Please confirm your password'), EqualTo('password')])
     name = StringField(label='Nome:', validators=[DataRequired(message='Please enter your name')])
@@ -21,7 +21,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 
-    email = StringField(label='Indirizzo Email:', validators=[DataRequired(message='Email is required'), Email()])
+    email = StringField(label='Indirizzo Email:', validators=[DataRequired(message='Email is required'), Length(max=45), Email()])
     password = PasswordField(label='Password:', validators=[DataRequired(message='Password is required')])
     submit = SubmitField(label='Accedi')
 
@@ -31,7 +31,7 @@ class ProfileForm(FlaskForm):
         if Consumer.query.filter_by(Email=email_to_check.data).first() and email_to_check.data != self.email.data:
             raise ValidationError('This email has been registered already!')
 
-    email = StringField(label='Indirizzo Email', validators=[DataRequired(message='Enter a valid email'), Email()])
+    email = StringField(label='Indirizzo Email', validators=[DataRequired(message='Enter a valid email'), Length(max=45), Email()])
     name = StringField(label='Nome', validators=[DataRequired(message='Enter your name')])
     surname = StringField(label='Cognome', validators=[DataRequired(message='Enter your surname')])
     date_of_birth = DateField(label='Data di Nascita', validators=[DataRequired(message='Please enter your date of birth')])
@@ -43,11 +43,11 @@ class ProfileForm(FlaskForm):
 
 
 class DietForm(FlaskForm):
-    diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired()])
+    diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired(message='Please select a diet type')])
     submit = SubmitField('Submit')
 
 class HealthConditionsForm(FlaskForm):
-    health_conditions = SelectField('Health Conditions', choices=[], validators=[DataRequired()])
+    health_conditions = SelectField('Health Conditions', choices=[], validators=[DataRequired(message='Please select an health condition')])
     submit = SubmitField('Submit')
 
 class PhysicalActivityForm(FlaskForm):
@@ -62,14 +62,14 @@ class JoinFamilyForm(FlaskForm):
 
 
 class BodyCompositionForm(FlaskForm):
-    weight = DecimalField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0, max=500, message="Weight must be a positive value")])
-    height = DecimalField('Height (cm)', validators=[DataRequired(), NumberRange(min=0, max=300, message="Height must be a positive value")])
+    weight = DecimalField('Weight (kg)', validators=[DataRequired(message='Weight required'), NumberRange(min=0, max=500, message="Weight must be a positive value")])
+    height = DecimalField('Height (cm)', validators=[DataRequired(message='Height required'), NumberRange(min=0, max=300, message="Height must be a positive value")])
     submit = SubmitField('Update Body Composition')
 
 
 class NewPurchaseForm(FlaskForm):
-    purchase_id = StringField('Receipt ID', validators=[DataRequired()])
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    product = SelectField('Product', choices=[], validators=[DataRequired()])
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
-    price = DecimalField('Price', places=2, validators=[DataRequired()])
+    receipt_id = StringField('Receipt ID:', validators=[DataRequired(message='Please, enter the receipt ID')])
+    date = DateField('Date:', validators=[DataRequired(message='Purchase date required')], format='%Y-%m-%d')
+    product = SelectField('Product:', choices=[], validators=[DataRequired(message='Please, select a product')])
+    quantity = IntegerField('Quantity:', validators=[DataRequired(message='Quantity required'), NumberRange(min=1)])
+    price = DecimalField('Price:', places=2, validators=[DataRequired(message='Price required'), NumberRange(min=0)])
