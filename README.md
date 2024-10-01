@@ -20,6 +20,8 @@ change the username, password and database name accordingly to your configuratio
 
 Change the python3 command with the one of your python version and system.
 
+Link to download the database with already some data to try the app: https://drive.google.com/file/d/1pEK4J9YxtdeN414zM8_cNEsyMrlWpbzQ/view?usp=sharing
+
 Next time you'll run the application, make sure to activate the virtual environment before running it.
 Just repeat step 4 and 7 in the correct folder.
 
