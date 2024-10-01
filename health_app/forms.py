@@ -42,13 +42,13 @@ class ProfileForm(FlaskForm):
 
 
 
-class DietForm(FlaskForm):
-    diet_type = SelectField('Diet Type', choices=[], validators=[DataRequired(message='Please select a diet type')])
-    submit = SubmitField('Submit')
+class AddDietForm(FlaskForm):
+    diet_choice = SelectField('Add a new Diet:', validators=[DataRequired()], choices=[])
+    submit_diet = SubmitField('Add Diet')
 
-class HealthConditionsForm(FlaskForm):
-    health_conditions = SelectField('Health Conditions', choices=[], validators=[DataRequired(message='Please select an health condition')])
-    submit = SubmitField('Submit')
+class AddHealthConditionForm(FlaskForm):
+    condition_choice = SelectField('Add a new Health Condition:', validators=[DataRequired()], choices=[])
+    submit_condition = SubmitField('Add Condition')
 
 class PhysicalActivityForm(FlaskForm):
     activity_id = SelectField('Activity', choices=[],validators=[DataRequired()])
