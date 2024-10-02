@@ -70,7 +70,7 @@
                                 <td>
                                     <form method="POST" action="{{ url_for('physical_activity_page') }}" class="delete-form">
                                         <input type="hidden" name="delete_activity_id" value="{{ user_activity.PhysicalActivityId }}">
-                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this, 'Delete', 'Activity')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

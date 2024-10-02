@@ -1,8 +1,12 @@
 <div id="confirmModal" class="modal fade" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-body">
-                <p>Are you sure you want to proceed?</p>
+           <div class="modal-header" id="confirmModalTitle">
+               <h5 class="modal-title" id="ConfirmModalLabel">Are you sure?</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+            <div class="modal-body" id="confirmModalBody">
+                <p> This action cannot be undone. </p>
             </div>
             <div class="modal-footer">
                 <button id="confirmBtn" class="btn btn-danger">Yes, continue</button>
@@ -13,8 +17,15 @@
 </div>
 
 <script>
-    function openConfirmModal(button) {
+    function openConfirmModal(button, action, subject) {
         const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+        const modalTitle = document.querySelector('#ConfirmModalLabel');
+        const modalConfirmBtn = document.querySelector('#confirmBtn'); // Button
+        if ( action && subject){
+            modalTitle.innerHTML = `${action} ${subject}?`;
+            modalConfirmBtn.innerHTML = `Yes, ${action}`;
+        }
         modal.show();
 
         document.getElementById('confirmBtn').onclick = function() {

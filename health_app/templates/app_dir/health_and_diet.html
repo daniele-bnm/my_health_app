@@ -56,7 +56,7 @@
                                     <td>
                                         <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="delete-form">
                                             <input type="hidden" name="delete_diet" value="{{ diet.DietId }}">
-                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this)">
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this, 'Remove', 'Diet')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -106,7 +106,7 @@
                                     <td>
                                         <form method="POST" action="{{ url_for('health_and_diet_page') }}" class="delete-form">
                                             <input type="hidden" name="delete_condition" value="{{ condition.HealthConditions }}">
-                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this)">
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this, 'Remove', 'Health Condition')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>

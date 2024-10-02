@@ -84,7 +84,7 @@
                 </div>
                 <form method="POST" action="{{ url_for('delete_purchase') }}" class="text-center delete-form">
                     <input type="hidden" name="delete_purchaseid">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this)">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="openConfirmModal(this, 'Delete', 'Purchase')">
                         <i class="bi bi-trash"></i>
                     </button>
                 </form>
