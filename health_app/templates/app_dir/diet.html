@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Health and Diet{% endblock %}
+
+
+{% block content %}
+{% include 'modal.html' %}
+
+<div class="container mt-5">
+      <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Health & Diet</h1>
+        <p class="lead text-muted animate__animated animate__fadeInDown">Select your diets and your health conditions to get personalized recommendations</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mb-4">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Health & Diet</li>
+            </ol>
+        </nav>
+
+        <!-- Diets Section -->
+
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Your Diet Choices</h5>
+                    <!-- Add New Diet -->
+                    <form method="POST" action="{{ url_for('diet_page') }}">
+                        {{ diet_form.hidden_tag() }}
+                        <div class="form-group mb-3">
+                            {{ diet_form.diet_choice.label }}
+                            {{ diet_form.diet_choice(class="form-select diet_choice", id="diet_choice") }}
+                        </div>
+                        <div class="text-center px-5">
+                            {{ diet_form.submit_diet(class="btn btn-primary w-50 mb-3") }}
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-light table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Diet</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for diet in context.user_diets %}
+                                <tr class="animate__animated animate__fadeInUp">
+                                    <td>{{ diet.DietId }}</td>
+                                    <td>{{ diet.Description }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('diet_page') }}" class="delete-form">
+                                            <input type="hidden" name="delete_diet" value="{{ diet.DietId }}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this, 'Remove', 'Diet')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                 <tr>
+                                    <td colspan="3" class="text-center">No diets selected.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function() {
+        $('.diet_choice').select2({
+                placeholder: "Type to search..."
+            });
+    });
+
+</script>
+{% endblock %}

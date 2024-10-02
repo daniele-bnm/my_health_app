@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Health and Diet{% endblock %}
+
+
+{% block content %}
+{% include 'modal.html' %}
+
+<div class="container mt-5">
+      <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">Health Conditions</h1>
+        <p class="lead text-muted animate__animated animate__fadeInDown">Select your health conditions to get personalized recommendations</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mb-4">
+
+
+
+        <!-- Health Conditions Section -->
+            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center mb-2" onclick="window.history.back()">
+                <i class="bi bi-arrow-left me-2"></i> Back
+            </button>
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Your Health Conditions</h5>
+                     <!-- Add New Health Condition -->
+                    <form method="POST" action="{{ url_for('health_page') }}">
+                        {{ condition_form.hidden_tag() }}
+                        <div class="form-group mb-3">
+                            {{ condition_form.condition_choice.label }}
+                            {{ condition_form.condition_choice(class="form-select condition_choice", id="condition_choice ") }}
+                        </div>
+                        <div class="text-center px-5">
+                            {{ condition_form.submit_condition(class="btn btn-primary w-50 mb-3") }}
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-light table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Condition</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for condition in context.user_conditions %}
+                                <tr class="animate__animated animate__fadeInUp">
+                                    <td>{{ condition.HealthConditions }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('health_page') }}" class="delete-form">
+                                            <input type="hidden" name="delete_condition" value="{{ condition.HealthConditions }}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end" onclick="openConfirmModal(this, 'Remove', 'Health Condition')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                 <tr>
+                                    <td colspan="3" class="text-center">No health conditions selected.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function() {
+        $('.condition_choice').select2({
+                placeholder: "Type to search..."
+            });
+    });
+
+</script>
+{% endblock %}
