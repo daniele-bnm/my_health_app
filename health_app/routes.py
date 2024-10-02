@@ -259,49 +259,28 @@ def profile_page():
 
     return render_template('app_dir/profile.html', form=form)
 
-@app.route('/health_and_diet', methods=['GET', 'POST'])
+@app.route('/diet', methods=['GET', 'POST'])
 @login_required
-def health_and_diet_page():
-
+def diet_page():
     diet_form = AddDietForm()
-    condition_form = AddHealthConditionForm()
 
     user_diets = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).all()
-    user_conditions = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId).all()
-
     selected_diets = Diet.query.filter(Diet.DietId.in_([d.Diet for d in user_diets])).all()
 
     available_diets = Diet.query.filter(Diet.DietId.notin_([d.Diet for d in user_diets])).all()
     available_diets.insert(0, Diet(DietId='', Description=''))
     diet_form.diet_choice.choices = available_diets
 
-    available_conditions = HealthConditions.query.filter(HealthConditions.HealthConditionId.notin_([c.HealthConditions for c in user_conditions])).all()
-    available_conditions.insert(0, HealthConditions(HealthConditionId='', Description=''))
-    condition_form.condition_choice.choices = available_conditions
-
-    # Populate diet and condition form choices
     diet_form.diet_choice.choices = [(d.DietId, d.DietId) for d in available_diets]
-    condition_form.condition_choice.choices = [(c.HealthConditionId, c.HealthConditionId) for c in available_conditions]
 
-    # Handle Diet Form Submission
     if diet_form.validate_on_submit() and 'diet_choice' in request.form:
         new_diet_choice = diet_form.diet_choice.data
         new_choice = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=new_diet_choice)
         db.session.add(new_choice)
         db.session.commit()
         flash('Diet added successfully!', 'success')
-        return redirect(url_for('health_and_diet_page'))
+        return redirect(url_for('diet_page'))
 
-    # Handle Health Condition Form Submission
-    if condition_form.validate_on_submit() and 'condition_choice' in request.form:
-        new_condition_choice = condition_form.condition_choice.data
-        new_choice = ConsumerHealthConditions(Consumer=current_user.ConsumerId, HealthConditions=new_condition_choice)
-        db.session.add(new_choice)
-        db.session.commit()
-        flash('Health condition added successfully!', 'success')
-        return redirect(url_for('health_and_diet_page'))
-
-    # Handle deletion (POST request to remove items)
     if request.method == 'POST':
         if 'delete_diet' in request.form:
             diet_to_delete = request.form['delete_diet']
@@ -310,25 +289,42 @@ def health_and_diet_page():
                 db.session.delete(delete_entry)
                 db.session.commit()
                 flash('Diet removed successfully!', 'success')
-                return redirect(url_for('health_and_diet_page'))
+                return redirect(url_for('diet_page'))
 
-        elif 'delete_condition' in request.form:
+    return render_template('app_dir/diet.html', diet_form=diet_form, context={'user_diets': selected_diets})
+
+@app.route('/health', methods=['GET', 'POST'])
+@login_required
+def health_page():
+    condition_form = AddHealthConditionForm()
+
+    user_conditions = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId).all()
+
+    available_conditions = HealthConditions.query.filter(HealthConditions.HealthConditionId.notin_([c.HealthConditions for c in user_conditions])).all()
+    available_conditions.insert(0, HealthConditions(HealthConditionId='', Description=''))
+    condition_form.condition_choice.choices = available_conditions
+
+    condition_form.condition_choice.choices = [(c.HealthConditionId, c.HealthConditionId) for c in available_conditions]
+
+    if condition_form.validate_on_submit() and 'condition_choice' in request.form:
+        new_condition_choice = condition_form.condition_choice.data
+        new_choice = ConsumerHealthConditions(Consumer=current_user.ConsumerId, HealthConditions=new_condition_choice)
+        db.session.add(new_choice)
+        db.session.commit()
+        flash('Health condition added successfully!', 'success')
+        return redirect(url_for('health_page'))
+
+    if request.method == 'POST':
+        if 'delete_condition' in request.form:
             condition_to_delete = request.form['delete_condition']
             delete_entry = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId, HealthConditions=condition_to_delete).first()
             if delete_entry:
                 db.session.delete(delete_entry)
                 db.session.commit()
                 flash('Health condition removed successfully!', 'success')
-                return redirect(url_for('health_and_diet_page'))
+                return redirect(url_for('health_page'))
 
-    # Render the page with all the context
-    return render_template('app_dir/health_and_diet.html',
-                           diet_form=diet_form,
-                           condition_form=condition_form,
-                           context={
-                               'user_diets': selected_diets,
-                               'user_conditions': user_conditions
-                           })
+    return render_template('app_dir/health.html', condition_form=condition_form, context={'user_conditions': user_conditions})
 
 @app.route('/phisical_activity', methods=['GET', 'POST'])
 @login_required
