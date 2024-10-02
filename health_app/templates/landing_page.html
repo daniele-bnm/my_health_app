@@ -27,9 +27,9 @@
     <div class="row justify-content-center mt-5">
       <div class="col-md-10 text-center animate__animated animate__fadeInUp">
         {% if current_user.is_authenticated %}
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home_page') }}">Entra</a>
+          <a class="btn btn-primary btn-lg w-50" href="{{ url_for('home_page') }}">Entra</a>
         {% else %}
-          <a class="btn btn-primary btn-lg" href="{{ url_for('login_page') }}">Inizia ora</a>
+          <a class="btn btn-primary btn-lg w-50" href="{{ url_for('login_page') }}">Inizia ora</a>
         {% endif %}
       </div>
     </div>
