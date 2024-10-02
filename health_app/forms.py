@@ -13,8 +13,8 @@ class RegistrationForm(FlaskForm):
     email = StringField(label='Indirizzo Email:', validators=[DataRequired(message='Email is required'), Length(max=45), Email()])
     password = PasswordField(label='Password:', validators=[DataRequired(message='Password is required'), Length(min=6)])
     confirm_password = PasswordField(label='Conferma Password:', validators=[DataRequired(message='Please confirm your password'), EqualTo('password')])
-    name = StringField(label='Nome:', validators=[DataRequired(message='Please enter your name')])
-    surname = StringField(label='Cognome:', validators=[DataRequired(message='Please enter your surname')])
+    name = StringField(label='Nome:', validators=[DataRequired(message='Please enter your name'), Length(max=45)])
+    surname = StringField(label='Cognome:', validators=[DataRequired(message='Please enter your surname'), Length(max=45)])
     date_of_birth = DateField(label='Data di Nascita:', validators=[DataRequired(message='Please enter your date of birth')])
     gender = SelectField(label='Genere:', choices=[('', 'Seleziona'), ('male', 'Maschio'), ('female', 'Femmina')], validators=[DataRequired(message='Please select your gender')])
     submit = SubmitField(label='Crea Account')
@@ -32,12 +32,12 @@ class ProfileForm(FlaskForm):
             raise ValidationError('This email has been registered already!')
 
     email = StringField(label='Indirizzo Email', validators=[DataRequired(message='Enter a valid email'), Length(max=45), Email()])
-    name = StringField(label='Nome', validators=[DataRequired(message='Enter your name')])
-    surname = StringField(label='Cognome', validators=[DataRequired(message='Enter your surname')])
+    name = StringField(label='Nome', validators=[DataRequired(message='Enter your name'), Length(max=45)])
+    surname = StringField(label='Cognome', validators=[DataRequired(message='Enter your surname'), Length(max=45)])
     date_of_birth = DateField(label='Data di Nascita', validators=[DataRequired(message='Please enter your date of birth')])
-    place_of_birth = StringField(label='Luogo di Nascita')
+    place_of_birth = StringField(label='Luogo di Nascita', validators=[Length(max=45)])
     gender = SelectField(label='Genere', choices=[('','Seleziona'),('male', 'Maschio'), ('female', 'Femmina')], validators=[DataRequired(message='Please select your gender')])
-    address = StringField(label='Indirizzo')
+    address = StringField(label='Indirizzo', validators=[Length(max=45)])
     submit = SubmitField(label='Salva')
 
 
@@ -57,7 +57,7 @@ class PhysicalActivityForm(FlaskForm):
     submit = SubmitField('Add Activity')
 
 class JoinFamilyForm(FlaskForm):
-    existing_family_code = StringField('Family Code', validators=[DataRequired()])
+    existing_family_code = StringField('Family Code', validators=[DataRequired(), Length(max=10)])
     submit = SubmitField('Join Family')
 
 
