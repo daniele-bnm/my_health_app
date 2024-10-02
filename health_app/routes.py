@@ -128,7 +128,7 @@ def purchases_page():
 def new_purchase():
     if current_user.Family is None:
         flash('You are not part of a family yet. Please join or create a family first.', 'warning')
-        return redirect(url_for('family_page'))
+        return redirect(url_for('home_page'))
 
     form = NewPurchaseForm()
     products = Product.query.all()
@@ -140,8 +140,8 @@ def new_purchase():
 @login_required
 def submit_purchase():
     if current_user.Family is None:
-        flash('You are not part of a family yet. Please join or create a family first.', 'warning')
-        return redirect(url_for('family_page'))
+        flash('You are not part of a family yet. Please join or create a family first.', 'danger')
+        return redirect(url_for('home_page'))
 
     purchase_id = str(uuid.uuid4())
     receipt_id = request.form.get('receipt_id')
@@ -177,8 +177,8 @@ def submit_purchase():
         flash('Purchase added successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        flash('An error occurred while adding the purchase. Please try again.', 'danger')
         print(e)
+        flash('An error occurred while adding the purchase. Please try again.', 'danger')
     finally:
         return redirect(url_for('new_purchase'))
 
@@ -329,70 +329,6 @@ def health_and_diet_page():
                                'user_diets': selected_diets,
                                'user_conditions': user_conditions
                            })
-
-#
-# @app.route('/health_and_diet', methods=['GET', 'POST'])
-# @login_required
-# def health_and_diet_page():
-#
-#     dform = DietForm()
-#     hform = HealthConditionsForm()
-#
-#     # Get the user's health conditions and diet
-#     user_conditions = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId).all()
-#     selected_diets = DietConsumerChoices.query.filter_by(Consumer=current_user.ConsumerId).all()
-#     context = {'user_conditions': user_conditions, 'selected_diets': selected_diets}
-#
-#     # Populate the diet type choices
-#     diets = Diet.query.all()
-#     dform.diet_type.choices = [(diet.DietId, diet.Description) for diet in diets]
-#     for diet in selected_diets:
-#         dform.diet_type.choices.remove((diet.DietId, diet.Description))
-#
-#     # Populate the health condition choices
-#     hcs = HealthConditions.query.all()
-#     hform.health_conditions.choices = [hc.HealthConditionId for hc in hcs]
-#     for hc in hcs:
-#         hform.health_conditions.choices.remove(hc.HealthConditionId)
-#
-#     # Save selected diet
-#     if dform.validate_on_submit():
-#         if False:
-#             ss=1
-#         else:
-#             new_diet = DietConsumerChoices(Consumer=current_user.ConsumerId, Diet=dform.diet_type.data)
-#             db.session.add(new_diet)
-#             db.session.commit()
-#
-#         flash('Your selections have been saved!', 'success')
-#         return redirect(url_for('health_and_diet_page'))
-#
-#
-#
-#     if request.method == 'POST' and 'delete_condition' in request.form:
-#         condition_id = request.form.get('delete_condition')
-#         condition = ConsumerHealthConditions.query.filter_by(Consumer=current_user.ConsumerId, HealthConditions=condition_id).first()
-#         if condition:
-#             db.session.delete(condition)
-#             db.session.commit()
-#             flash('Health condition deleted successfully!', 'success')
-#             return redirect(url_for('health_and_diet_page'))
-#         else:
-#             flash('Health condition not found!', 'danger')
-#             return redirect(url_for('health_and_diet_page'))
-#
-#     if dform.errors != {} :
-#         for err_msg in dform.errors.values():
-#             msg = f'{err_msg}'
-#             flash(f'Diet form: {msg[2:-2]}', 'warning')
-#
-#     if hform.errors != {} :
-#         for err_msg in hform.errors.values():
-#             msg = f'{err_msg}'
-#             flash(f'Health conditions form: {msg[2:-2]}', 'warning')
-#
-#
-#     return render_template('app_dir/health_and_diet.html', context=context)
 
 @app.route('/phisical_activity', methods=['GET', 'POST'])
 @login_required

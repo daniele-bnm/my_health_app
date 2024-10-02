@@ -99,13 +99,12 @@
             function() {
                 // Add event listener for the "Add Purchase" button
                 $('#addPurchaseBtn').click(function() {
-                    var userInFamily = {{ 'true' if current_user.Family else 'false' | tojson }};
-                    if (userInFamily) {
+                    {% if current_user.Family %}
                         window.location.href = "{{ url_for('new_purchase') }}";
-                    } else {
+                    {% else %}
                         // If user is not in a family, show the modal
                         $('#notInFamilyModal').modal('show');
-                    }
+                    {% endif %}
                 });
 
                 // Add event listener for the "View Purchase Details"

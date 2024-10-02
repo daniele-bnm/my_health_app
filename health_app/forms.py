@@ -68,7 +68,7 @@ class BodyCompositionForm(FlaskForm):
 
 
 class NewPurchaseForm(FlaskForm):
-    receipt_id = StringField('Receipt ID:', validators=[DataRequired(message='Please, enter the receipt ID')])
+    receipt_id = StringField('Receipt ID:', validators=[DataRequired(message='Please, enter the receipt ID'), Length(max=20)])
     date = DateField('Date:', validators=[DataRequired(message='Purchase date required')], format='%Y-%m-%d')
     product = SelectField('Product:', choices=[], validators=[DataRequired(message='Please, select a product')])
     quantity = IntegerField('Quantity:', validators=[DataRequired(message='Quantity required'), NumberRange(min=1)])
