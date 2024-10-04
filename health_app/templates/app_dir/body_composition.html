@@ -14,12 +14,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
 
-            <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Body Composition</li>
-                  </ol>
-             </nav>
+            {% include 'back_button.html' %}
 
             <!-- Card to add new body composition data -->
             <div class="card shadow-lg border-0">

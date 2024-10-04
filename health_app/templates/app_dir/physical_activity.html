@@ -10,12 +10,7 @@
             <p class="lead text-muted animate__animated animate__fadeInDown">Track your daily physical activities and monitor your progress.</p>
         </div>
 
-     <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Physical Activity</li>
-          </ol>
-     </nav>
+     {% include 'back_button.html' %}
      <div class="card shadow-lg border-0 mb-5">
             <div class="card-body p-4">
                 <h4 class="card-title mb-4">Register New Activity</h4>

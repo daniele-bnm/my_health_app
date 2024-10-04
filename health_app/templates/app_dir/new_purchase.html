@@ -11,14 +11,8 @@
     </div>
     <div class="row justify-content-center">
     <div class="col-lg-8">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('purchases_page') }}">Purchases</a></li>
-            <li class="breadcrumb-item active" aria-current="page">New Purchase</li>
-        </ol>
-    </nav>
+
+    {% include 'back_button.html' %}
 
     <form id="purchaseForm">
         <!-- Purchase Info Section -->

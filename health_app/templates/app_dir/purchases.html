@@ -12,19 +12,11 @@
 
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Purchases</li>
-                    </ol>
-                </nav>
 
-                <!-- Add Purchase Button -->
-                <button class="btn btn-success mb-4" id="addPurchaseBtn">Add New Purchase</button>
+                {% include 'back_button.html' %}
+                <button class="btn btn-success mb-4 w-50" id="addPurchaseBtn">Add New Purchase</button>
 
                 <!-- Past Purchases List -->
-
                 {% for purchase in past_purchases %}
                     <div class="list-group animate__animated animate__fadeInUp">
                         <a href="#" class="list-group-item list-group-item-action"
