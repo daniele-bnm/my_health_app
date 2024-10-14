@@ -3,57 +3,57 @@
 {% block title %}Registration Page{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container my-5">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <div class="card shadow-lg border-0">
-        <div class="card-body p-5">
-          <h2 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Crea il tuo Account</h2>
+        <div class="card-body px-5 py-3">
+          <h2 class="text-center my-4 fw-bold animate__animated animate__fadeInDown">Create your Account</h2>
           <form method="POST" class="form-register needs-validation" novalidate>
             {{ form.hidden_tag() }}
             <div class="mb-3">
               {{ form.email.label(class="form-label") }}
-              {{ form.email(class="form-control form-control-lg", placeholder="Indirizzo Email", required=True, type="email") }}
-              <div class="invalid-feedback">Per favore, inserisci un indirizzo email valido.</div>
+              {{ form.email(class="form-control form-control-lg", placeholder="example@example.com", required=True, type="email") }}
+              <div class="invalid-feedback">Please, enter a valid email address.</div>
             </div>
             <div class="mb-3">
               {{ form.password.label(class="form-label") }}
               {{ form.password(class="form-control form-control-lg", placeholder="Password", required=True) }}
-              <div class="invalid-feedback">Per favore, inserisci una password.</div>
+              <div class="invalid-feedback">Please, enter a valid password.</div>
             </div>
             <div class="mb-3">
               {{ form.confirm_password.label(class="form-label") }}
-              {{ form.confirm_password(class="form-control form-control-lg", placeholder="Conferma Password", required=True) }}
-              <div class="invalid-feedback">Le password non coincidono.</div>
+              {{ form.confirm_password(class="form-control form-control-lg", placeholder="Verify Password", required=True) }}
+              <div class="invalid-feedback">Passwords don't match.</div>
             </div>
-            <div class="row mb-3">
-              <div class="col">
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control form-control-lg", placeholder="Nome", required=True) }}
-                <div class="invalid-feedback">Per favore, inserisci il tuo nome.</div>
+                {{ form.name(class="form-control form-control-lg", placeholder="Name", required=True) }}
+                <div class="invalid-feedback">Please, enter your name.</div>
               </div>
-              <div class="col">
+              <div class="col-md-6 mb-3">
                 {{ form.surname.label(class="form-label") }}
-                {{ form.surname(class="form-control form-control-lg", placeholder="Cognome", required=True) }}
-                <div class="invalid-feedback">Per favore, inserisci il tuo cognome.</div>
+                {{ form.surname(class="form-control form-control-lg", placeholder="Surname", required=True) }}
+                <div class="invalid-feedback">Please, enter your surname.</div>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="col">
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 {{ form.date_of_birth.label(class="form-label") }}
                 {{ form.date_of_birth(class="form-control form-control-lg", placeholder="dd/mm/yyyy", required=True, type="date") }}
-                <div class="invalid-feedback">Per favore, inserisci la tua data di nascita.</div>
+                <div class="invalid-feedback">Please, enter your date of birth.</div>
               </div>
-              <div class="col">
+              <div class="col-md-6 mb-3">
                 {{ form.gender.label(class="form-label") }}
                 {{ form.gender(class="form-select form-control-lg", required=True) }}
-                <div class="invalid-feedback">Per favore, seleziona il tuo genere.</div>
+                <div class="invalid-feedback">Please, select your gender.</div>
               </div>
             </div>
-            {{ form.submit(class="btn btn-lg btn-primary w-100 animate__animated animate__fadeInUp") }}
+            {{ form.submit(class="btn btn-lg btn-primary w-100 mt-4 animate__animated animate__fadeInUp") }}
           </form>
           <div class="text-center mt-4 animate__animated animate__fadeInUp">
-            <p>Hai già un account? <a href="{{ url_for('login_page') }}" class="link-primary fw-bold">Accedi</a></p>
+            <p>Already have an account? <a href="{{ url_for('login_page') }}" class="link-primary fw-bold">Log in</a></p>
           </div>
         </div>
       </div>

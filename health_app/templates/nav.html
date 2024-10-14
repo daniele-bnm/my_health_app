@@ -7,9 +7,9 @@
       Sana Spesa
     </a>
       <div>
-        Ciao, <b>{{ current_user.Name }}</b>
+        Hello, <b>{{ current_user.Name }}</b>
         <span class="mx-1">|</span>
-        <a class="btn btn-light btn-sm" href="{{ url_for('logout_page') }}">Esci</a>
+        <a class="btn btn-light btn-sm" href="{{ url_for('logout_page') }}">Log out</a>
       </div>
     {% else %}
     <a class="navbar-brand" href="{{ url_for('landing_page') }}">
@@ -17,9 +17,9 @@
       Sana Spesa
     </a>
     <div>
-        <a class="btn btn-primary btn-sm" href="{{ url_for('login_page') }}">Accedi</a>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('login_page') }}">Log in</a>
         <span class="mx-2">|</span>
-        <a class="btn btn-secondary btn-sm" href="{{ url_for('register_page') }}">Registati</a>
+        <a class="btn btn-secondary btn-sm" href="{{ url_for('register_page') }}">Register</a>
     </div>
     {% endif %}
 

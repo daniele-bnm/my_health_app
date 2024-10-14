@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
       <div class="col-md-10 text-center">
         <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">Sana Spesa</h1>
-        <p class="lead text-muted animate__animated animate__fadeIn">La tua guida per una spesa sana e consapevole</p>
+        <p class="lead text-muted animate__animated animate__fadeIn">Your guide to healthy and conscious shopping</p>
       </div>
     </div>
     <div class="row align-items-center mt-4">
@@ -15,21 +15,21 @@
       </div>
       <div class="col-md-6 order-md-1 mt-3 mt-md-0 animate__animated animate__fadeInLeft">
         <p class="fs-5 text-muted">
-          Sana Spesa è una webApp perfetta per tenere traccia delle tue abitudini quotidiane e della tua spesa! Ricevi consigli su cosa mangiare e quanto per raggiungere i tuoi obiettivi. I grafici interattivi mostrano il tuo progresso in modo chiaro e intuitivo, aiutandoti a vivere una vita più salutare.
+          Sana Spesa is the perfect webApp to keep track of your daily habits and your shopping! Get tips on what to eat and how much to reach your goals. Interactive charts show your progress in a clear and intuitive way, helping you to live a healthier life.
         </p>
         <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Consigli alimentari personalizzati</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Traccia il tuo progresso</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Interfaccia intuitiva e moderna</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Personalised dietary advice</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Keep track of your progress</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Intuitive and modern interface</li>
         </ul>
       </div>
     </div>
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center mt-5 mb-5">
       <div class="col-md-10 text-center animate__animated animate__fadeInUp">
         {% if current_user.is_authenticated %}
-          <a class="btn btn-primary btn-lg w-50" href="{{ url_for('home_page') }}">Entra</a>
+          <a class="btn btn-primary btn-lg w-50 mb-5" href="{{ url_for('home_page') }}">Enter</a>
         {% else %}
-          <a class="btn btn-primary btn-lg w-50" href="{{ url_for('login_page') }}">Inizia ora</a>
+          <a class="btn btn-primary btn-lg w-50 mb-5" href="{{ url_for('login_page') }}">Start now</a>
         {% endif %}
       </div>
     </div>

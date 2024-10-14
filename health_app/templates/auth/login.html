@@ -2,32 +2,32 @@
 
 {% block title %}Login Page{% endblock %}
 {% block content %}
-<div class="container mt-5">
+<div class="container my-5">
   <div class="row justify-content-center ">
     <div class="col-lg-5 col-md-7">
       <div class="card shadow-lg border-0 ">
-        <div class="card-body p-5 ">
-          <h2 class="text-center mb-4 fw-bold animate__animated animate__fadeInDown">Effettua l'Accesso</h2>
+        <div class="card-body px-5 py-3">
+          <h2 class="text-center my-4 fw-bold animate__animated animate__fadeInDown">Log in</h2>
           <form method="POST" class="form-login needs-validation" novalidate>
             {{ form.hidden_tag() }}
             <div class="mb-3 ">
               {{ form.email.label(class="form-label") }}
               {{ form.email(class="form-control form-control-lg", id="email", placeholder="example@example.com", required=True, type="email") }}
               <div class="invalid-feedback">
-                Per favore, inserisci un'email valida.
+                Please, enter a valid email address.
               </div>
             </div>
             <div class="mb-4 ">
               {{ form.password.label(class="form-label") }}
               {{ form.password(class="form-control form-control-lg", id="password", placeholder="Password", required=True) }}
               <div class="invalid-feedback">
-                Per favore, inserisci la tua password.
+                Please, enter a valid password.
               </div>
             </div>
-            <button type="submit" class="btn btn-lg btn-primary w-100 animate__animated animate__fadeInUp">Accedi</button>
+            <button type="submit" class="btn btn-lg btn-primary w-100 mt-4animate__animated animate__fadeInUp">Login</button>
           </form>
           <div class="text-center mt-4 animate__animated animate__fadeInUp">
-            <p>Non hai un account? <a href="{{ url_for('register_page') }}" class="link-primary fw-bold">Registrati</a></p>
+            <p>Don't have an account? <a href="{{ url_for('register_page') }}" class="link-primary fw-bold">Register</a></p>
           </div>
         </div>
       </div>
