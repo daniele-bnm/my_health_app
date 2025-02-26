@@ -25,3 +25,5 @@ Link to download the database with already some data to try the app: https://dri
 Next time you'll run the application, make sure to activate the virtual environment before running it.
 Just repeat step 4 and 7 in the correct folder.
 
+Repo now Archived.
+Email me if you need anything :)
